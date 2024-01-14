@@ -2,15 +2,15 @@ version: "3.8"
 services:
   mysql:
     image: mysql:8.0
-    container_name: study-db
+    container_name: mysql
     ports:
       - 3306:3306
     environment:
-      MYSQL_ROOT_PASSWORD: admin!32
+      MYSQL_ROOT_PASSWORD: woong7361
       TZ: Asia/Seoul
-      MYSQL_DATABASE: ebrainsoft_study
-      MYSQL_USER: ebsoft
-      MYSQL_PASSWORD: ebsoft
+      MYSQL_DATABASE: study
+      MYSQL_USER: woong
+      MYSQL_PASSWORD: woong7361
     command:
       - --character-set-server=UTF8MB4
       - --collation-server=UTF8MB4_UNICODE_CI
