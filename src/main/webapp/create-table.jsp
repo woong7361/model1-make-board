@@ -14,9 +14,10 @@
 </head>
 <body>
 <%
-
     Connection connection = ConnectionPool.getConnection();
-    String sql = "CREATE TABLE board (" +
+
+
+    String createBoardTableSql = "CREATE TABLE board (" +
             "board_id INT AUTO_INCREMENT PRIMARY KEY, " +
             "category VARCHAR(10) NOT NULL, " +
             "name VARCHAR(10) NOT NULL, " +
@@ -27,13 +28,23 @@
             "created_at TIMESTAMP , " +
             "modified_at TIMESTAMP " +
             ")";
-
-    Statement statement = connection.createStatement();
-
-    statement.execute(sql);
-    statement.close();
+    Statement boardStatement = connection.createStatement();
+    boardStatement.execute(createBoardTableSql);
+    boardStatement.close();
     connection.close();
 
+
+    String createCommentTableSql = "CREATE TABLE comment (" +
+            "comment_id INT AUTO_INCREMENT PRIMARY KEY, " +
+            "board_id INT NOT NULL, " +
+            "content VARCHAR(2000) NOT NULL, " +
+            "created_at TIMESTAMP, " +
+            "FOREIGN KEY (board_id) REFERENCES board (board_id)" +
+            ")";
+    Statement CommentStatement = connection.createStatement();
+    CommentStatement.execute(createCommentTableSql);
+    CommentStatement.close();
+    connection.close();
 %>
 </body>
 </html>
