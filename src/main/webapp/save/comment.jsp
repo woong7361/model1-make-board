@@ -35,7 +35,7 @@
     CommentDao commentDao = new JdbcCommentDao();
     commentDao.saveComment(commentCreateDto);
 
-    response.sendRedirect("/view/board.jsp?board_id=" + commentCreateDto.getBoard_id());
+    response.sendRedirect("/board/free/view.jsp?board_id=" + commentCreateDto.getBoard_id());
 %>
 
 </body>

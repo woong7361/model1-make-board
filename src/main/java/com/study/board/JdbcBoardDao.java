@@ -4,6 +4,7 @@ package com.study.board;
 import com.study.board.dto.BoardCreateDto;
 import com.study.board.dto.BoardDto;
 import com.study.board.dto.BoardListDto;
+import com.study.board.dto.BoardModifyDto;
 import com.study.comment.dto.CommentDto;
 import com.study.connection.ConnectionPool;
 import com.study.encryption.CipherEncrypt;
@@ -18,13 +19,13 @@ import java.util.List;
 import java.util.Optional;
 
 public class JdbcBoardDao implements BoardDao{
-    public static final String FIND_ALL = "all";
+    public static final String FIND_ALL = "ALL";
 
     @Override
     public int saveBoard(BoardCreateDto boardCreateDto) throws Exception{
         Connection connection = ConnectionPool.getConnection();
         String createBoardSql = "INSERT INTO board (" +
-                "category, name, password, title, " +
+                "category_id, name, password, title, " +
                 "content, view, created_at, modified_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -32,7 +33,7 @@ public class JdbcBoardDao implements BoardDao{
         String password = encryptManger.encrypt(boardCreateDto.getPassword());
 
         PreparedStatement preparedStatement = connection.prepareStatement(createBoardSql, Statement.RETURN_GENERATED_KEYS);
-        preparedStatement.setString(1, boardCreateDto.getCategory());
+        preparedStatement.setInt(1, boardCreateDto.getCategory().getCategoryId());
         preparedStatement.setString(2, boardCreateDto.getName());
         preparedStatement.setString(3, password);
         preparedStatement.setString(4, boardCreateDto.getTitle());
@@ -54,13 +55,13 @@ public class JdbcBoardDao implements BoardDao{
     }
 
     @Override
-    public int getCountBySearchKeyAndCategoryAndDate(String searchKey, String searchCategory, String searchStartDate, String searchEndDate) throws Exception{
+    public int getCountBySearchKeyAndCategoryAndDate(String searchKey, Category searchCategory, String searchStartDate, String searchEndDate) throws Exception{
         Connection connection = ConnectionPool.getConnection();
         String getCountSql = "SELECT COUNT(*) FROM board WHERE (created_at BETWEEN ? AND ?)" ;
 
         String categorySearchSql = "";
-        if (!FIND_ALL.equals(searchCategory)){
-            categorySearchSql = " AND (category = ?)";
+        if (!searchCategory.equals(Category.ALL)){
+            categorySearchSql = " AND (category_id = ?)";
         }
         String searchKeySql = "";
         if (!FIND_ALL.equals(searchKey)) {
@@ -77,7 +78,7 @@ public class JdbcBoardDao implements BoardDao{
         preparedStatement.setTimestamp(index++, Timestamp.valueOf(searchStartTimestamp));
         preparedStatement.setTimestamp(index++, Timestamp.valueOf(searchEndTimestamp));
 
-        if (!FIND_ALL.equals(searchCategory)) preparedStatement.setString(index++, searchCategory);
+        if (!searchCategory.equals(Category.ALL)) preparedStatement.setInt(index++, searchCategory.getCategoryId());
         if (!FIND_ALL.equals(searchKey)){
             preparedStatement.setString(index++, "%"+searchKey+"%");
             preparedStatement.setString(index++, "%"+searchKey+"%");
@@ -98,21 +99,25 @@ public class JdbcBoardDao implements BoardDao{
     }
 
     @Override
-    public List<BoardListDto> getBoardListBySearchKeyAndCategoryAndDate(String searchKey, String searchCategory, String searchStartDate, String searchEndDate, Integer currentPage, int pageOffset) throws Exception {
+    public List<BoardListDto> getBoardListBySearchKeyAndCategoryAndDate(String searchKey, Category searchCategory, String searchStartDate, String searchEndDate, Integer currentPage, int pageOffset) throws Exception {
         Connection connection = ConnectionPool.getConnection();
 //        String getCountSql = "SELECT (category, title, name, view, created_at, modified_at) FROM board WHERE (created_at BETWEEN ? AND ?)" ;
-        String getBoardListSql = "SELECT b.*, (SELECT (count(*) > 0) from file as f where f.board_id = b.board_id) AS count " +
-                "FROM board AS b WHERE (created_at BETWEEN ? AND ?)" ;
+//        String getBoardListSql = "SELECT b.*, (SELECT (count(*) > 0) from file as f where f.board_id = b.board_id) AS count " +
+//                "FROM board AS b WHERE (created_at BETWEEN ? AND ?)" ;
+
+        String getBoardListSql = "SELECT b.*, c.category, (SELECT (count(*) > 0) from file as f where f.board_id = b.board_id) AS count " +
+                "FROM board AS b LEFT JOIN category AS c ON b.category_id = c.category_id " +
+                "WHERE (created_at BETWEEN ? AND ?)" ;
 
         String categorySearchSql = "";
-        if (!FIND_ALL.equals(searchCategory)){
-            categorySearchSql = " AND (category = ?)";
+        if (!searchCategory.equals(Category.ALL)){
+            categorySearchSql = " AND (b.category_id = ?)";
         }
         String searchKeySql = "";
         if (!FIND_ALL.equals(searchKey)) {
             searchKeySql = " AND (title LIKE ? OR name LIKE ? OR content LIKE ?)";
         }
-        String pageSql = " ORDER BY board_id LIMIT ?, ?";
+        String pageSql = " ORDER BY board_id DESC LIMIT ?, ?";
         getBoardListSql = getBoardListSql + categorySearchSql + searchKeySql + pageSql;
 
         LocalDateTime searchStartTimestamp = LocalDateTime.of(LocalDate.parse(searchStartDate), LocalTime.MIN);
@@ -124,7 +129,7 @@ public class JdbcBoardDao implements BoardDao{
         preparedStatement.setTimestamp(index++, Timestamp.valueOf(searchStartTimestamp));
         preparedStatement.setTimestamp(index++, Timestamp.valueOf(searchEndTimestamp));
 
-        if (!FIND_ALL.equals(searchCategory)) preparedStatement.setString(index++, searchCategory);
+        if (!searchCategory.equals(Category.ALL)) preparedStatement.setInt(index++, searchCategory.getCategoryId());
         if (!FIND_ALL.equals(searchKey)){
             preparedStatement.setString(index++, "%"+searchKey+"%");
             preparedStatement.setString(index++, "%"+searchKey+"%");
@@ -140,13 +145,13 @@ public class JdbcBoardDao implements BoardDao{
         List<BoardListDto> boardList = new ArrayList<>();
         while (resultSet.next()) {
             BoardListDto board = new BoardListDto(
-                    resultSet.getInt("board_id"),
-                    Category.valueOf(resultSet.getString("category")),
-                    resultSet.getString("title"),
-                    resultSet.getString("name"),
-                    resultSet.getInt("view"),
-                    resultSet.getTimestamp("created_at").toLocalDateTime(),
-                    resultSet.getTimestamp("modified_at").toLocalDateTime(),
+                    resultSet.getInt("b.board_id"),
+                    Category.valueOf(resultSet.getString("c.category")),
+                    resultSet.getString("b.title"),
+                    resultSet.getString("b.name"),
+                    resultSet.getInt("b.view"),
+                    resultSet.getTimestamp("b.created_at").toLocalDateTime(),
+                    resultSet.getTimestamp("b.modified_at").toLocalDateTime(),
                     resultSet.getBoolean("count")
             );
             boardList.add(board);
@@ -162,7 +167,10 @@ public class JdbcBoardDao implements BoardDao{
     @Override
     public Optional<BoardDto> getBoardByBoardId(int boardId) throws Exception{
         Connection connection = ConnectionPool.getConnection();
-        String getBoardSql = "SELECT * FROM board AS b LEFT JOIN comment AS c ON b.board_id = c.board_id WHERE (b.board_id = ?)" ;
+        String getBoardSql =
+                "SELECT b.*, (SELECT category FROM category AS c WHERE b.category_id = c.category_id) AS category " +
+                "FROM board AS b " +
+                "WHERE (b.board_id = ?)" ;
 
 
         PreparedStatement preparedStatement = connection.prepareStatement(getBoardSql);
@@ -171,41 +179,76 @@ public class JdbcBoardDao implements BoardDao{
         ResultSet resultSet = preparedStatement.executeQuery();
 
         Optional<BoardDto> boardDto = Optional.empty();
-        ArrayList<CommentDto> commentList = new ArrayList<>();
-
-        boolean flag = true;
-        while (resultSet.next()) {
-            if (flag) {
-                boardDto = Optional.of(new BoardDto(
-                        resultSet.getInt("b.board_id"),
-                        Category.valueOf(resultSet.getString("b.category")),
-                        resultSet.getString("b.title"),
-                        resultSet.getString("b.name"),
-                        resultSet.getString("b.content"),
-                        resultSet.getInt("b.view"),
-                        resultSet.getTimestamp("b.created_at").toLocalDateTime(),
-                        resultSet.getTimestamp("b.modified_at").toLocalDateTime(),
-                        commentList
-                ));
-                flag = false;
-            }
-
-            if (Optional.ofNullable(resultSet.getTimestamp("c.created_at")).isPresent()) {
-                commentList.add(new CommentDto(
-                        resultSet.getInt("c.comment_id"),
-                        resultSet.getString("c.content"),
-                        resultSet.getTimestamp("c.created_at").toLocalDateTime()
-                ));
-            }
+        if (resultSet.next()) {
+            boardDto = Optional.of(new BoardDto(
+                    resultSet.getInt("b.board_id"),
+                    Category.valueOf(resultSet.getString("category")),
+                    resultSet.getString("b.title"),
+                    resultSet.getString("b.name"),
+                    resultSet.getString("b.content"),
+                    resultSet.getInt("b.view"),
+                    resultSet.getTimestamp("b.created_at").toLocalDateTime(),
+                    resultSet.getTimestamp("b.modified_at").toLocalDateTime()
+            ));
         }
-
 
         resultSet.close();
         preparedStatement.close();
         connection.close();
 
-
         return boardDto;
+    }
+
+    @Override
+    public void addBoardViewByBoardId(int boardId) throws Exception{
+        Connection connection = ConnectionPool.getConnection();
+        String getBoardSql = "UPDATE board SET view = (view+1) WHERE board_id = ?";
+
+        PreparedStatement preparedStatement = connection.prepareStatement(getBoardSql);
+        preparedStatement.setInt(1, boardId);
+        preparedStatement.executeUpdate();
+
+        preparedStatement.close();
+        connection.close();
+
+    }
+
+    @Override
+    public void updateBoard(BoardModifyDto boardModifyDto) throws Exception {
+        Connection connection = ConnectionPool.getConnection();
+
+        String updateBoardSql = "UPDATE board " +
+                "SET name = ?, " +
+                "password = ?, " +
+                "title = ?, " +
+                "content = ? ," +
+                "modified_at = ? " +
+                "WHERE board_id = ?";
+
+        PreparedStatement preparedStatement = connection.prepareStatement(updateBoardSql);
+        preparedStatement.setString(1, boardModifyDto.getName());
+        preparedStatement.setString(2, boardModifyDto.getPassword());
+        preparedStatement.setString(3, boardModifyDto.getTitle());
+        preparedStatement.setString(4, boardModifyDto.getContent());
+        preparedStatement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+        preparedStatement.setInt(6, boardModifyDto.getBoard_id());
+        preparedStatement.executeUpdate();
+
+        preparedStatement.close();
+        connection.close();
+    }
+
+    @Override
+    public void deleteByBoardId(int boardId) throws Exception {
+        Connection connection = ConnectionPool.getConnection();
+        String deleteSql = "DELETE FROM board WHERE board_id = ?";
+
+        PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
+        preparedStatement.setInt(1, boardId);
+        preparedStatement.executeUpdate();
+
+        preparedStatement.close();
+        connection.close();
     }
 
 }

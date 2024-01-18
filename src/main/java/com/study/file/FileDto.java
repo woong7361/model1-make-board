@@ -1,25 +1,19 @@
 package com.study.file;
 
 public class FileDto {
-    final String originalName;
-    final String Name;
-    final String path;
+    private final int fileId;
+    private final String originalName;
 
-    public FileDto(String originalName, String name, String path) {
+    public FileDto(int fileId, String originalName) {
+        this.fileId = fileId;
         this.originalName = originalName;
-        Name = name;
-        this.path = path;
     }
 
     public String getOriginalName() {
         return originalName;
     }
 
-    public String getName() {
-        return Name;
-    }
-
-    public String getPath() {
-        return path;
+    public int getFileId() {
+        return fileId;
     }
 }

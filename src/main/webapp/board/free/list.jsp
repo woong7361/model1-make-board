@@ -4,6 +4,7 @@
 <%@ page import="com.study.board.dto.BoardListDto" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="com.study.board.Category" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%!
@@ -15,7 +16,7 @@
     public static final String CATEGORY_PARAM = "search_category";
 
     public static final String PAGE_PARAM = "page";
-    public static final String FIND_ALL = "all";
+    public static final String FIND_ALL = "ALL";
 
     public static final String DEFAULT_START_DATE = "2024-01-01";
     public static final String DEFAULT_END_DATE = "2025-01-01";
@@ -26,23 +27,22 @@
 
     BoardDao boardDao = new JdbcBoardDao();
 
-    String pageParameter = request.getParameter(PAGE_PARAM);
-    Integer currentPage = Optional.ofNullable(pageParameter)
+    Integer currentPage = Optional.ofNullable(request.getParameter(PAGE_PARAM))
             .map(p -> Integer.parseInt(p))
             .orElse(FIRST_PAGE);
-    //한글 검색값 확인
-    String searchKey = request.getParameter(KEY_PARAM);
-    searchKey = Optional.ofNullable(searchKey)
+
+    String searchKey = Optional.ofNullable(request.getParameter(KEY_PARAM))
             .filter(key -> !key.isEmpty())
             .orElse(FIND_ALL);
-    String searchCategory = request.getParameter(CATEGORY_PARAM);
-    searchCategory = Optional.ofNullable(searchCategory)
-            .orElse(FIND_ALL);
-    String searchStartDate = request.getParameter(START_DATE_PARAM);
-    searchStartDate = Optional.ofNullable(searchStartDate)
+
+    Category searchCategory = Optional.ofNullable(request.getParameter(CATEGORY_PARAM))
+            .map(c -> Category.valueOf(c))
+            .orElse(Category.ALL);
+
+    String searchStartDate = Optional.ofNullable(request.getParameter(START_DATE_PARAM))
             .orElse(DEFAULT_START_DATE);
-    String searchEndDate = request.getParameter(END_DATE_PARAM);
-    searchEndDate = Optional.ofNullable(searchEndDate)
+
+    String searchEndDate = Optional.ofNullable(request.getParameter(END_DATE_PARAM))
             .orElse(DEFAULT_END_DATE);
 
     int totalCount =
@@ -60,7 +60,7 @@
             "&search_key=" + searchKey +
             "&start_date=" + searchStartDate +
             "&end_date=" + searchEndDate;
-    String searchUrl = "/view/list.jsp" + searchParam;
+    String searchUrl = "/board/free/list.jsp" + searchParam;
     while (pageLinkList.size() < 5) {
         //add left
         if (previousPage >= 0) {
@@ -75,17 +75,6 @@
 
         if (previousPage < 0 && nextPage * PAGE_OFFSET >= totalCount) break;
     }
-
-
-
-
-//    System.out.println("count = " + totalCount);
-//    System.out.println("currentPage = " + currentPage);
-//    System.out.println("searchKey = " + searchKey);
-//    System.out.println("searchCategory = " + searchCategory);
-//    System.out.println("searchStartDate = " + searchStartDate);
-//    System.out.println("searchEndDate = " + searchEndDate);
-
 %>
 <html>
 <head>
@@ -104,7 +93,7 @@
             console.log(search_category)
             console.log(search_key)
 
-            search_form.action = "<%=cp%>/view/list.jsp";
+            search_form.action = "<%=cp%>/board/free/list.jsp";
             search_form.submit()
         }
     </script>
@@ -118,10 +107,10 @@
             ~
             <input type="date" name="end_date" value="2025-01-01" min="2023-01-01" max="2025-12-12">
             <select name="search_category">
-                <option value="all">all</option>
-                <option value="java">java</option>
-                <option value="javascript">javascript</option>
-                <option value="database">database</option>
+                <option value="ALL">ALL</option>
+                <option value="JAVA">JAVA</option>
+                <option value="JAVASCRIPT">JAVASCRIPT</option>
+                <option value="DATABASE">DATABASE</option>
             </select>
             <input type="text" name="search_key"/>
             <input type="button" value=" 검 색 " onclick="search();"/>
@@ -151,7 +140,7 @@
                 <dd class="category"><%=board.isHavaFile()%></dd>
                 <dd class="title">
 <%--                    <a href="<%=articleUrl %>&num=<%=dto.getNum()%>">--%>
-                    <a href="/view/board.jsp<%=searchParam%>&page=<%=currentPage%>&board_id=<%=board.getBoardId()%>">
+                    <a href="/board/free/view.jsp<%=searchParam%>&page=<%=currentPage%>&board_id=<%=board.getBoardId()%>">
                         <%=board.getTitle() %>
                     </a>
                 </dd>
@@ -165,7 +154,7 @@
             <%=pageLinkList%>
 
         <div id="create_board_link">
-            <button><a href="/view/create.jsp">등록</a></button>
+            <button><a href="/board/free/write.jsp">등록</a></button>
         </div>
     </div>
 

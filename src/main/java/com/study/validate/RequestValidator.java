@@ -26,8 +26,8 @@ public class RequestValidator {
 
     public void validateCreateBoardRequest(MultipartRequest multipartRequest) {
         this.validateBoardCategory(multipartRequest.getParameter(CATEGORY_PARAM));
-        this.validateParameterPattern(multipartRequest.getParameter(NAME_PARAM), NAME_PATTERN);
         this.validateParameterPattern(multipartRequest.getParameter(PASSWORD_PARAM), PASSWORD_PATTERN);
+        this.validateParameterPattern(multipartRequest.getParameter(NAME_PARAM), NAME_PATTERN);
         this.validateParameterPattern(multipartRequest.getParameter(TITLE_PARAM), TITLE_PATTERN);
         this.validateParameterPattern(multipartRequest.getParameter(BOARD_CONTENT_PARAM), CONTENT_PATTERN);
     }
@@ -36,6 +36,13 @@ public class RequestValidator {
         this.validateParameterPattern(request.getParameter(BOARD_ID_PARAM), PK_PATTERN);
         this.validateParameterPattern(request.getParameter(COMMENT_CONTENT_PARAM), CONTENT_PATTERN);
 
+    }
+
+    public void validateModifyBoardRequest(MultipartRequest multipartRequest) {
+        this.validateParameterPattern(multipartRequest.getParameter(NAME_PARAM), NAME_PATTERN);
+        this.validateParameterPattern(multipartRequest.getParameter(PASSWORD_PARAM), PASSWORD_PATTERN);
+        this.validateParameterPattern(multipartRequest.getParameter(TITLE_PARAM), TITLE_PATTERN);
+        this.validateParameterPattern(multipartRequest.getParameter(BOARD_CONTENT_PARAM), CONTENT_PATTERN);
     }
 
     // error 설명이 매우 약함
@@ -50,7 +57,7 @@ public class RequestValidator {
         Category[] categories = Category.values();
 
         boolean match = Arrays.stream(categories)
-                .map(c -> c.toString())
+                .map(c -> c.name())
                 .anyMatch(c -> c.equals(category));
 
         if (!match) {

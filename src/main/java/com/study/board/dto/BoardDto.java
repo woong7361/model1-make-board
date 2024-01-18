@@ -16,9 +16,8 @@ public class BoardDto {
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
 
-    private final List<CommentDto> commentList;
 
-    public BoardDto(int boardId, Category category, String title, String name, String content, int view, LocalDateTime createdAt, LocalDateTime modifiedAt, List<CommentDto> commentList) {
+    public BoardDto(int boardId, Category category, String title, String name, String content, int view, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.boardId = boardId;
         this.category = category;
         this.title = title;
@@ -27,7 +26,6 @@ public class BoardDto {
         this.view = view;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
-        this.commentList = commentList;
     }
 
     public int getBoardId() {
@@ -60,9 +58,5 @@ public class BoardDto {
 
     public LocalDateTime getModifiedAt() {
         return modifiedAt;
-    }
-
-    public List<CommentDto> getCommentList() {
-        return commentList;
     }
 }

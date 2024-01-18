@@ -11,11 +11,6 @@
 <head>
     <title>Title</title>
     <script type="text/javascript">
-
-        function verify_file(file) {
-            //verify
-        }
-
         function send(){
             let send_form = document.create_form
 
@@ -92,9 +87,9 @@
                 <dt>카테고리*</dt>
                 <dd>
                     <select name="category">
-                        <option value="java">java</option>
-                        <option value="database">database</option>
-                        <option value="javascript">javascript</option>
+                        <option value="JAVA">JAVA</option>
+                        <option value="DATABASE">DATABASE</option>
+                        <option value="JAVASCRIPT">JAVASCRIPT</option>
                     </select>
                 </dd>
             </dl>
@@ -144,9 +139,9 @@
             <dl>
                 <dt>파일 첨부</dt>
                 <dd>
-                    <input type="file" name="file1"/>
-                    <input type="file" name="file2"/>
-                    <input type="file" name="file3"/>
+                    <input type="file" name="file_add1"/>
+                    <input type="file" name="file_add2"/>
+                    <input type="file" name="file_add3"/>
                 </dd>
             </dl>
         </div>
@@ -154,7 +149,7 @@
 
     <div id="buttons">
         <input type="button" value="저장" onclick="send();"/>
-<%--        <input type="button" value="취소" onclick="javascript:location.href='<%=cp%>/board/list.jsp';"/>--%>
+        <input type="button" value="취소" onclick="javascript:location.href='<%=cp%>/board/free/list.jsp';"/>
     </div>
     </form>
 

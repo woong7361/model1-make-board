@@ -1,5 +1,9 @@
 <%@ page import="java.io.FileInputStream" %>
-<%@ page import="java.io.File" %><%--
+<%@ page import="java.io.File" %>
+<%@ page import="java.util.Optional" %>
+<%@ page import="com.study.file.FileDao" %>
+<%@ page import="com.study.file.JdbcFileDao" %>
+<%@ page import="com.study.file.FileDownloadDto" %><%--
   Created by IntelliJ IDEA.
   User: woong
   Date: 24. 1. 17.
@@ -11,12 +15,15 @@
 <%
     request.setCharacterEncoding("UTF-8");
 
-    String fileName = request.getParameter("file_name");
-    String originalFileName = request.getParameter("original_name");
+    int fileId = Optional.ofNullable(request.getParameter("file_id"))
+            .map((id) -> Integer.parseInt(id))
+            .orElseThrow(() -> new IllegalArgumentException("invalid fileId"));
 
-    String realPath = request.getRealPath("/files");
+    FileDao fileDao = new JdbcFileDao();
+    FileDownloadDto fileDto = fileDao.getFileByFileId(fileId)
+            .orElseThrow(() -> new IllegalArgumentException("invalid fileId"));
 
-    File file = new File(realPath + "/" + fileName);
+    File file = new File(fileDto.getPath());
 
     String mimeType = request.getServletContext().getMimeType(file.toString());
     System.out.println("mimeType = " + mimeType);
@@ -25,6 +32,7 @@
         response.setContentType("application.octec-stream");
     }
 
+    String originalFileName = fileDto.getOriginalName();
     if(request.getHeader("user-agent").indexOf("MSIE") == -1)
     {
         originalFileName = new String(originalFileName.getBytes("UTF-8"), "8859_1");

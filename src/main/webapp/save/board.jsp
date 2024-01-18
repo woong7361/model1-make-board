@@ -52,7 +52,7 @@
         return;
     }
 
-    response.sendRedirect("/view/list.jsp");
+    response.sendRedirect("/board/free/list.jsp");
 %>
 
 </body>

@@ -16,17 +16,25 @@
 <%
     Connection connection = ConnectionPool.getConnection();
 
+    String createCategoryTableSql = "CREATE TABLE category (" +
+            "category_id INT AUTO_INCREMENT PRIMARY KEY, " +
+            "category VARCHAR(100) NOT NULL" +
+            ")";
+    Statement categoryStatement = connection.createStatement();
+    categoryStatement.execute(createCategoryTableSql);
+    categoryStatement.close();
 
     String createBoardTableSql = "CREATE TABLE board (" +
             "board_id INT AUTO_INCREMENT PRIMARY KEY, " +
-            "category VARCHAR(10) NOT NULL, " +
+            "category_id INT NOT NULL, " +
             "name VARCHAR(10) NOT NULL, " +
             "password VARCHAR(200) NOT NULL, " +
             "title VARCHAR(20) NOT NULL, " +
             "content TEXT NOT NULL, " +
             "view INT NOT NULL, " +
-            "created_at TIMESTAMP , " +
-            "modified_at TIMESTAMP " +
+            "created_at TIMESTAMP, " +
+            "modified_at TIMESTAMP, " +
+            "FOREIGN KEY (category_id) REFERENCES category (category_id)" +
             ")";
     Statement boardStatement = connection.createStatement();
     boardStatement.execute(createBoardTableSql);
@@ -58,13 +66,11 @@
     fileStatement.execute(createFileTableSql);
     fileStatement.close();
 
-//    String createCategoryTableSql = "CREATE TABLE category (" +
-//            "category_id INT AUTO_INCREMENT PRIMARY KEY, " +
-//            "category VARCHAR(100) NOT NULL" +
-//            ")";
-//    Statement categoryStatement = connection.createStatement();
-//    fileStatement.execute(createCategoryTableSql);
-//    fileStatement.close();
+
+    String categoryInitSql = "INSERT INTO category (category) VALUES ('JAVA'), ('JAVASCRIPT'), ('DATABASE')";
+    Statement categoryInitStatement = connection.createStatement();
+    categoryInitStatement.execute(categoryInitSql);
+    categoryInitStatement.close();
 
 
     connection.close();

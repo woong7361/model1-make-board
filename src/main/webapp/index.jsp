@@ -8,7 +8,7 @@
 <h1><%= "Hello World!" %>
 </h1>
 <br/>
-<a href="/view/list.jsp">go list page</a>
-<a href="/view/create.jsp">go create page</a>
+<a href="/board/free/list.jsp">go list page</a>
+<a href="/board/free/write.jsp">go create page</a>
 </body>
 </html>

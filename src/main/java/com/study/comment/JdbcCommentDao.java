@@ -1,14 +1,16 @@
 package com.study.comment;
 
 import com.study.comment.dto.CommentCreateDto;
+import com.study.comment.dto.CommentDto;
 import com.study.connection.ConnectionPool;
-import com.study.encryption.CipherEncrypt;
-import com.study.encryption.EncryptManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JdbcCommentDao implements CommentDao{
     @Override
@@ -28,4 +30,43 @@ public class JdbcCommentDao implements CommentDao{
         preparedStatement.close();
         connection.close();
     }
+
+    @Override
+    public List<CommentDto> getCommentByBoardId(int boardId) throws Exception {
+        Connection connection = ConnectionPool.getConnection();
+        String getCommentSql = "SELECT * FROM comment WHERE board_id = ?";
+
+        PreparedStatement preparedStatement = connection.prepareStatement(getCommentSql);
+        preparedStatement.setInt(1, boardId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<CommentDto> commentList = new ArrayList<>();
+        while (resultSet.next()) {
+            commentList.add(new CommentDto(
+                    resultSet.getInt("comment_id"),
+                    resultSet.getString("content"),
+                    resultSet.getTimestamp("created_at").toLocalDateTime()
+            ));
+        }
+
+        resultSet.close();
+        preparedStatement.close();
+        connection.close();
+
+        return commentList;
+    }
+
+
+    public void deleteByBoardId(int boardId) throws Exception {
+        Connection connection = ConnectionPool.getConnection();
+        String deleteSql = "DELETE FROM comment WHERE board_id = ?";
+
+        PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
+        preparedStatement.setInt(1, boardId);
+        preparedStatement.executeUpdate();
+
+        preparedStatement.close();
+        connection.close();
+    }
+
 }

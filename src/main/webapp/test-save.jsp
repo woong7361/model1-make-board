@@ -15,36 +15,22 @@
 <html>
 <head>
     <title>Title</title>
+    <script type="text/javascript">
+        function send(){
+            let send_form = document.create_form
+
+            send_form.action = "test.jsp";
+            send_form.submit()
+        }
+    </script>
 </head>
 <body>
-<%
-    String saveDirectory = application.getRealPath("/files");
-    int maxPostSize = 1024 * 1024 * 5; // 5MB  단위 byte
-    String encoding = "UTF-8";
-    FileRenamePolicy policy = new DefaultFileRenamePolicy();
+<form action="" method="post" name="create_form">
+    <input type="text" value="1 " name="name"/>
+    <input type="text" value="2 " name="name"/>
 
-    new MultipartHandler().getMultipartRequest(request);
+    <input type="button" value="저장" onclick="send();"/>
+</form>
 
-//    MultipartRequest multipartRequest = new MultipartRequest(request, saveDirectory, maxPostSize, encoding, policy);
-//    request.setCharacterEncoding("UTF-8");
-//
-//    String category = multipartRequest.getParameter("category");
-//    String name = multipartRequest.getParameter("name");
-//    String password = multipartRequest.getParameter("password");
-//    String title = multipartRequest.getParameter("title");
-//    String content = multipartRequest.getParameter("content");
-//    File file = multipartRequest.getFile("file");
-//    String original = multipartRequest.getOriginalFileName("file");
-//    String fileSystemName = multipartRequest.getFilesystemName("file");
-//    System.out.println("original = " + original);
-//    System.out.println("fileSystemName = " + fileSystemName);
-//    System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
-//    System.out.println("file.getPath() = " + file.getPath());
-
-
-
-//    BoardCreateDto boardCreateDto = new BoardCreateDto(category, name, password, title, content, file);
-
-%>
 </body>
 </html>
