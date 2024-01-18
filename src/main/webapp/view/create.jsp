@@ -12,29 +12,21 @@
     <title>Title</title>
     <script type="text/javascript">
 
-        function get_file(send_form) {
-            //temp
-            return undefined;
+        function verify_file(file) {
+            //verify
         }
 
         function send(){
             let send_form = document.create_form
 
-            let category = get_category(send_form)
-            let name = get_name(send_form)
-            let password = get_password(send_form)
-            let title = get_title(send_form)
-            let content = get_content(send_form)
-            let file = get_file(send_form)
+            verify_category(send_form.category.value);
+            verify_name(send_form.name.value);
+            verify_password(send_form.password.value, send_form.password_confirm.value);
+            verify_title(send_form.title.value);
+            verify_content(send_form.content.value)
 
-            send_form.action = "<%=cp%>/save.jsp";
+            send_form.action = "<%=cp%>/save/board.jsp";
             send_form.submit()
-        }
-
-        function get_category(send_form) {
-            let category = send_form.category.value
-            verify_category(category);
-            return category
         }
 
         function verify_category(category) {
@@ -45,25 +37,12 @@
             }
         }
 
-        function get_name(send_form) {
-            let name = send_form.name.value
-            verify_name(name);
-            return name
-        }
-
         function verify_name(name) {
             const name_test_regex = /^[가-힣]{3,4}$/
             if (!name_test_regex.test(name)) {
                 alert('correct name please')
                 throw "invalid name"
             }
-        }
-
-        function get_password(send_form) {
-            let password = send_form.password.value
-            let password_confirm = send_form.password_confirm.value
-            verify_password(password, password_confirm);
-            return password
         }
 
         function verify_password(password, password_confirm) {
@@ -79,24 +58,12 @@
             }
         }
 
-        function get_title(send_form) {
-            let title = send_form.title.value
-            verify_title(title);
-            return title
-        }
-
         function verify_title(title) {
             const title_test_regex = /.{4,100}$/
             if (!title_test_regex.test(title)) {
                 alert('correct title please')
                 throw "invalid title"
             }
-        }
-
-        function get_content(send_form) {
-            let content = send_form.content.value
-            verify_content(content);
-            return content
         }
 
         function verify_content(content) {
@@ -118,7 +85,7 @@
         게시판 등록
     </div>
 
-    <form action="" method="post" name="create_form">
+    <form action="" method="post" name="create_form" enctype="multipart/form-data">
     <div id="create_form">
         <div id="category">
             <dl>
@@ -175,9 +142,11 @@
         </div>
         <div id="file">
             <dl>
-                <dt>파일 첨부 - 나중에</dt>
+                <dt>파일 첨부</dt>
                 <dd>
-                    <input type="text" name="file"/><button>파일 찾기</button>
+                    <input type="file" name="file1"/>
+                    <input type="file" name="file2"/>
+                    <input type="file" name="file3"/>
                 </dd>
             </dl>
         </div>

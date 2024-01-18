@@ -1,7 +1,7 @@
 <%@ page import="com.study.board.JdbcBoardDao" %>
 <%@ page import="com.study.board.BoardDao" %>
 <%@ page import="java.util.Optional" %>
-<%@ page import="com.study.board.BoardListDto" %>
+<%@ page import="com.study.board.dto.BoardListDto" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -60,7 +60,7 @@
             "&search_key=" + searchKey +
             "&start_date=" + searchStartDate +
             "&end_date=" + searchEndDate;
-    String searchUrl = "/list.jsp" + searchParam;
+    String searchUrl = "/view/list.jsp" + searchParam;
     while (pageLinkList.size() < 5) {
         //add left
         if (previousPage >= 0) {
@@ -104,7 +104,7 @@
             console.log(search_category)
             console.log(search_key)
 
-            search_form.action = "<%=cp%>/list.jsp";
+            search_form.action = "<%=cp%>/view/list.jsp";
             search_form.submit()
         }
     </script>
@@ -148,10 +148,12 @@
             <%for(BoardListDto board : boardList){ %>
             <dl>
                 <dd class="category"><%=board.getCategory().toString()%></dd>
+                <dd class="category"><%=board.isHavaFile()%></dd>
                 <dd class="title">
 <%--                    <a href="<%=articleUrl %>&num=<%=dto.getNum()%>">--%>
+                    <a href="/view/board.jsp<%=searchParam%>&page=<%=currentPage%>&board_id=<%=board.getBoardId()%>">
                         <%=board.getTitle() %>
-<%--                    </a>--%>
+                    </a>
                 </dd>
                 <dd class="name"><%=board.getName() %></dd>
                 <dd class="view"><%=board.getView() %></dd>
@@ -161,8 +163,9 @@
             <%} %>
         </div>
             <%=pageLinkList%>
-        <div id="page_link">
 
+        <div id="create_board_link">
+            <button><a href="/view/create.jsp">등록</a></button>
         </div>
     </div>
 

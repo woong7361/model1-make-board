@@ -1,10 +1,12 @@
-package com.study.board;
+package com.study.board.dto;
+
+import com.study.board.Category;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public class BoardListDto {
-    private final String boardId;
+    private final int boardId;
     private final Category category;
     private final String title;
     private final String name;
@@ -13,7 +15,7 @@ public class BoardListDto {
     private final LocalDateTime modifiedAt;
     private final boolean havaFile;
 
-    public BoardListDto(String boardId, Category category, String title, String name, int view, LocalDateTime createdAt, LocalDateTime modifiedAt, boolean havaFile) {
+    public BoardListDto(int boardId, Category category, String title, String name, int view, LocalDateTime createdAt, LocalDateTime modifiedAt, boolean havaFile) {
         this.boardId = boardId;
         this.category = category;
         this.title = title;
@@ -24,7 +26,7 @@ public class BoardListDto {
         this.havaFile = havaFile;
     }
 
-    public String getBoardId() {
+    public int getBoardId() {
         return boardId;
     }
 

@@ -22,11 +22,16 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
-    compileOnly('jakarta.servlet:jakarta.servlet-api:5.0.0')
+    //cos.jar의 호환성으로 인해 javax로 변경
+//    compileOnly('jakarta.servlet:jakarta.servlet-api:5.0.0')
+    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.28'
+
+    //로컬 프로젝트 의존성 추가
+    implementation fileTree(dir: 'libs', includes: ['*.jar'])
 }
 
 test {

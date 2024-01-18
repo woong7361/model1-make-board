@@ -1,4 +1,8 @@
-package com.study.board;
+package com.study.board.dto;
+
+import com.study.file.FileCreateDto;
+
+import java.util.List;
 
 public class BoardCreateDto {
     private final String category;
@@ -6,15 +10,15 @@ public class BoardCreateDto {
     private final String password;
     private final String title;
     private final String content;
-    private final String file;
+    private final List<FileCreateDto> fileList;
 
-    public BoardCreateDto(String category, String name, String password, String title, String content, String file) {
+    public BoardCreateDto(String category, String name, String password, String title, String content, List<FileCreateDto> fileList) {
         this.category = category;
         this.name = name;
         this.password = password;
         this.title = title;
         this.content = content;
-        this.file = file;
+        this.fileList = fileList;
     }
 
     public String getCategory() {
@@ -35,5 +39,9 @@ public class BoardCreateDto {
 
     public String getContent() {
         return content;
+    }
+
+    public List<FileCreateDto> getFileList() {
+        return fileList;
     }
 }

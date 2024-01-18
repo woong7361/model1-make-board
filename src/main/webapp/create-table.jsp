@@ -23,7 +23,7 @@
             "name VARCHAR(10) NOT NULL, " +
             "password VARCHAR(200) NOT NULL, " +
             "title VARCHAR(20) NOT NULL, " +
-            "content VARCHAR(2000) NOT NULL, " +
+            "content TEXT NOT NULL, " +
             "view INT NOT NULL, " +
             "created_at TIMESTAMP , " +
             "modified_at TIMESTAMP " +
@@ -31,19 +31,42 @@
     Statement boardStatement = connection.createStatement();
     boardStatement.execute(createBoardTableSql);
     boardStatement.close();
-    connection.close();
 
 
     String createCommentTableSql = "CREATE TABLE comment (" +
             "comment_id INT AUTO_INCREMENT PRIMARY KEY, " +
             "board_id INT NOT NULL, " +
-            "content VARCHAR(2000) NOT NULL, " +
+            "content TEXT NOT NULL, " +
             "created_at TIMESTAMP, " +
             "FOREIGN KEY (board_id) REFERENCES board (board_id)" +
             ")";
-    Statement CommentStatement = connection.createStatement();
-    CommentStatement.execute(createCommentTableSql);
-    CommentStatement.close();
+    Statement commentStatement = connection.createStatement();
+    commentStatement.execute(createCommentTableSql);
+    commentStatement.close();
+
+
+    String createFileTableSql = "CREATE TABLE file (" +
+            "file_id INT AUTO_INCREMENT PRIMARY KEY, " +
+            "board_id INT NOT NULL, " +
+            "original_name VARCHAR(100) NOT NULL, " +
+            "name VARCHAR(200) NOT NULL, " +
+            "path VARCHAR(200) NOT NULL, " +
+            "extension VARCHAR(10) NOT NULL, " +
+            "FOREIGN KEY (board_id) REFERENCES board (board_id)" +
+            ")";
+    Statement fileStatement = connection.createStatement();
+    fileStatement.execute(createFileTableSql);
+    fileStatement.close();
+
+//    String createCategoryTableSql = "CREATE TABLE category (" +
+//            "category_id INT AUTO_INCREMENT PRIMARY KEY, " +
+//            "category VARCHAR(100) NOT NULL" +
+//            ")";
+//    Statement categoryStatement = connection.createStatement();
+//    fileStatement.execute(createCategoryTableSql);
+//    fileStatement.close();
+
+
     connection.close();
 %>
 </body>
