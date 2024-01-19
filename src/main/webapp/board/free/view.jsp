@@ -1,14 +1,15 @@
-<%@ page import="com.study.board.BoardDao" %>
-<%@ page import="com.study.board.JdbcBoardDao" %>
+<%@ page import="com.study.board.dao.BoardDao" %>
+<%@ page import="com.study.board.dao.JdbcBoardDao" %>
 <%@ page import="com.study.board.dto.BoardDto" %>
 <%@ page import="com.study.comment.dto.CommentDto" %>
-<%@ page import="com.study.file.JdbcFileDao" %>
-<%@ page import="com.study.file.FileDao" %>
-<%@ page import="com.study.file.FileDto" %>
+<%@ page import="com.study.file.dao.JdbcFileDao" %>
+<%@ page import="com.study.file.dao.FileDao" %>
+<%@ page import="com.study.file.dto.FileDto" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.study.comment.JdbcCommentDao" %>
-<%@ page import="com.study.comment.CommentDao" %>
+<%@ page import="com.study.comment.dao.JdbcCommentDao" %>
+<%@ page import="com.study.comment.dao.CommentDao" %>
 <%@ page import="java.util.Optional" %>
+<%@ page import="com.study.util.UrlUtil" %>
 <%--
   Created by IntelliJ IDEA.
   User: woong
@@ -20,14 +21,6 @@
 <html>
 <head>
     <title>board</title>
-<%!
-    public static final String KEY_PARAM = "search_key";
-    public static final String END_DATE_PARAM = "end_date";
-    public static final String START_DATE_PARAM = "start_date";
-    public static final String CATEGORY_PARAM = "search_category";
-    public static final String PAGE_PARAM = "page";
-%>
-<%String cp = request.getContextPath();%>
 <%
 
     int boardId = Optional.ofNullable(request.getParameter("board_id"))
@@ -36,7 +29,6 @@
 
     BoardDao boardDao = new JdbcBoardDao();
 
-    //need error handling
     BoardDto boardDto = boardDao
             .getBoardByBoardId(boardId)
             .orElseThrow(() -> new IllegalArgumentException());
@@ -49,38 +41,25 @@
 
     boardDao.addBoardViewByBoardId(boardId);
 
-    String searchKey = request.getParameter(KEY_PARAM);
-    String searchCategory = request.getParameter(CATEGORY_PARAM);
-    String searchStartDate = request.getParameter(START_DATE_PARAM);
-    String searchEndDate = request.getParameter(END_DATE_PARAM);
-    String currentPage = request.getParameter(PAGE_PARAM);
-
-    String searchParam =
-            "?" +
-            "search_category=" + searchCategory +
-            "&search_key=" + searchKey +
-            "&start_date=" + searchStartDate +
-            "&end_date=" + searchEndDate +
-            "&page=" + currentPage +
-            "&board_id=" + boardId;
+    String searchParamWithBoardId = UrlUtil.getSearchParamWithBoardIdAndPage(request);
 %>
 
 </head>
     <link href="/css/view.css" rel="stylesheet">
     <script type="text/javascript">
         function send(){
+            const content_pattern = /.{4,100}$/
+
             let create_form = document.create_form
-            verify_content(create_form.content.value)
-
-            create_form.action = "<%=cp%>/save/comment.jsp";
+            verify_pattern(create_form.content, content_pattern)
+            create_form.action = "/data/save-comment.jsp<%=searchParamWithBoardId%>";
             create_form.submit()
+        }
 
-            function verify_content(content) {
-                const comment_test_regex = /.{4,100}$/
-                if (!comment_test_regex.test(content)) {
-                    alert('correct comment please')
-                    throw "invalid comment"
-                }
+        function verify_pattern(tag, pattern) {
+            if (!pattern.test(tag.value)) {
+                alert('invalid ' + tag.name);
+                throw "invalid " + tag.name;
             }
         }
     </script>
@@ -134,8 +113,8 @@
     </div>
 
     <div id="board_footer">
-        <button onclick="location.href='/board/free/list.jsp<%=searchParam%>'">목록</button>
-        <button onclick="location.href='/board/free/modify.jsp<%=searchParam%>'">수정</button>
+        <button onclick="location.href='/board/free/list.jsp<%=searchParamWithBoardId%>'">목록</button>
+        <button onclick="location.href='/board/free/modify.jsp<%=searchParamWithBoardId%>'">수정</button>
         <button onclick="location.href='/file/delete.jsp?board_id=<%=boardId%>'">삭제</button>
     </div>
 </div>

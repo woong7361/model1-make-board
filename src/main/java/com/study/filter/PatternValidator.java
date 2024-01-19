@@ -1,4 +1,4 @@
-package com.study.validate;
+package com.study.filter;
 
 import com.oreilly.servlet.MultipartRequest;
 import com.study.board.Category;
@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-public class RequestValidator {
+public class PatternValidator {
     static final String CATEGORY_PARAM = "category";
     static final String PASSWORD_PARAM = "password";
     static final String NAME_PARAM = "name";
@@ -19,7 +19,7 @@ public class RequestValidator {
 
 
     static final String NAME_PATTERN = "^[가-힣]{3,4}$";
-    static final String PASSWORD_PATTERN = "^[a-zA-Z0-9#?!@$%^&*-]{4,15}$";
+    static final String PASSWORD_PATTERN = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{4,15}$";
     static final String TITLE_PATTERN = ".{4,100}$";
     static final String CONTENT_PATTERN = ".{4,2000}$";
     static final String PK_PATTERN = "^[0-9]+$";

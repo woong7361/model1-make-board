@@ -1,4 +1,4 @@
-package com.study.file;
+package com.study.file.dto;
 
 import java.io.File;
 

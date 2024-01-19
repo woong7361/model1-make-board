@@ -1,100 +1,39 @@
-<%@ page import="com.study.board.JdbcBoardDao" %>
-<%@ page import="com.study.board.BoardDao" %>
-<%@ page import="java.util.Optional" %>
+<%@ page import="com.study.board.dao.JdbcBoardDao" %>
+<%@ page import="com.study.board.dao.BoardDao" %>
 <%@ page import="com.study.board.dto.BoardListDto" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="com.study.board.Category" %>
+<%@ page import="com.study.util.UrlUtil" %>
+<%@ page import="com.study.filter.RequestHandler" %>
+<%@ page import="com.study.board.dto.BoardSearchDto" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%!
     private static final int PAGE_OFFSET = 2;
-    public static final int FIRST_PAGE = 0;
-    public static final String KEY_PARAM = "search_key";
-    public static final String END_DATE_PARAM = "end_date";
-    public static final String START_DATE_PARAM = "start_date";
-    public static final String CATEGORY_PARAM = "search_category";
-
-    public static final String PAGE_PARAM = "page";
-    public static final String FIND_ALL = "ALL";
-
-    public static final String DEFAULT_START_DATE = "2024-01-01";
-    public static final String DEFAULT_END_DATE = "2025-01-01";
 %>
 <%
     request.setCharacterEncoding("UTF-8");
-    String cp = request.getContextPath();
+
+    RequestHandler requestHandler = new RequestHandler();
+    BoardSearchDto boardSearchDto = requestHandler.getBoardSearchDto(request);
+    int currentPage = requestHandler.getCurrentPage(request);
 
     BoardDao boardDao = new JdbcBoardDao();
+    int totalCount = boardDao.getCountBySearchParam(boardSearchDto);
+    List<BoardListDto> boardList = boardDao.getBoardListBySearchParam(boardSearchDto, currentPage, PAGE_OFFSET);
 
-    Integer currentPage = Optional.ofNullable(request.getParameter(PAGE_PARAM))
-            .map(p -> Integer.parseInt(p))
-            .orElse(FIRST_PAGE);
+    List<String> pageLinkList = UrlUtil.getPageLinkTageList(request, currentPage, PAGE_OFFSET, totalCount);
 
-    String searchKey = Optional.ofNullable(request.getParameter(KEY_PARAM))
-            .filter(key -> !key.isEmpty())
-            .orElse(FIND_ALL);
-
-    Category searchCategory = Optional.ofNullable(request.getParameter(CATEGORY_PARAM))
-            .map(c -> Category.valueOf(c))
-            .orElse(Category.ALL);
-
-    String searchStartDate = Optional.ofNullable(request.getParameter(START_DATE_PARAM))
-            .orElse(DEFAULT_START_DATE);
-
-    String searchEndDate = Optional.ofNullable(request.getParameter(END_DATE_PARAM))
-            .orElse(DEFAULT_END_DATE);
-
-    int totalCount =
-            boardDao.getCountBySearchKeyAndCategoryAndDate(searchKey, searchCategory, searchStartDate, searchEndDate);
-    List<BoardListDto> boardList =
-            boardDao.getBoardListBySearchKeyAndCategoryAndDate(searchKey, searchCategory, searchStartDate, searchEndDate, currentPage, PAGE_OFFSET);
-
-    ArrayList<String> pageLinkList = new ArrayList<>();
-    pageLinkList.add("<font color=\"Fuchsia\">" + currentPage + "</font>&nbsp;\n");
-
-    int previousPage = currentPage - 1;
-    int nextPage = currentPage + 1;
-    String searchParam = "?" +
-            "search_category=" + searchCategory +
-            "&search_key=" + searchKey +
-            "&start_date=" + searchStartDate +
-            "&end_date=" + searchEndDate;
-    String searchUrl = "/board/free/list.jsp" + searchParam;
-    while (pageLinkList.size() < 5) {
-        //add left
-        if (previousPage >= 0) {
-            pageLinkList.add(0, "<a href=\"" + searchUrl + "&page=" + previousPage + "\">"+ previousPage +"</a>&nbsp;");
-            previousPage--;
-        }
-        //add right
-        if (nextPage * PAGE_OFFSET < totalCount) {
-            pageLinkList.add("<a href=\"" + searchUrl + "&page=" + nextPage + "\">" + nextPage + "</a>&nbsp;");
-            nextPage++;
-        }
-
-        if (previousPage < 0 && nextPage * PAGE_OFFSET >= totalCount) break;
-    }
+    String searchParam = UrlUtil.getSearchParam(request);
 %>
 <html>
 <head>
     <title>list view</title>
     <link href="/css/list.css" rel="stylesheet">
     <script type="text/javascript">
-
         function search(){
             let search_form = document.search_form
-            let start_date = search_form.start_date.value
-            let end_date = search_form.end_date.value
-            let search_category = search_form.search_category.value
-            let search_key = search_form.search_key.value
 
-            console.log(start_date)
-            console.log(end_date)
-            console.log(search_category)
-            console.log(search_key)
-
-            search_form.action = "<%=cp%>/board/free/list.jsp";
+            search_form.action = "/board/free/list.jsp";
             search_form.submit()
         }
     </script>

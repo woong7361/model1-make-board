@@ -1,4 +1,4 @@
-package com.study.file;
+package com.study.file.dto;
 
 public class FileDto {
     private final int fileId;

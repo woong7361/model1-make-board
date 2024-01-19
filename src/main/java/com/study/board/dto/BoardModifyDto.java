@@ -1,6 +1,6 @@
 package com.study.board.dto;
 
-import com.study.file.FileCreateDto;
+import com.study.file.dto.FileCreateDto;
 
 import java.util.List;
 

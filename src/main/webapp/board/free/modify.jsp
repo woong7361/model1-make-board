@@ -1,26 +1,19 @@
-<%@ page import="com.study.board.JdbcBoardDao" %>
-<%@ page import="com.study.board.BoardDao" %>
+<%@ page import="com.study.board.dao.JdbcBoardDao" %>
+<%@ page import="com.study.board.dao.BoardDao" %>
 <%@ page import="java.util.Optional" %>
 <%@ page import="com.study.board.dto.BoardDto" %>
-<%@ page import="com.study.file.JdbcFileDao" %>
-<%@ page import="com.study.file.FileDao" %>
-<%@ page import="com.study.file.FileDto" %>
-<%@ page import="java.util.List" %><%--
+<%@ page import="com.study.file.dao.JdbcFileDao" %>
+<%@ page import="com.study.file.dao.FileDao" %>
+<%@ page import="com.study.file.dto.FileDto" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.study.util.UrlUtil" %>
+<%--
   Created by IntelliJ IDEA.
   User: woong
   Date: 24. 1. 18.
   Time: 오후 1:43
   To change this template use File | Settings | File Templates.
 --%>
-<%!
-    public static final String KEY_PARAM = "search_key";
-    public static final String END_DATE_PARAM = "end_date";
-    public static final String START_DATE_PARAM = "start_date";
-    public static final String CATEGORY_PARAM = "search_category";
-    public static final String PAGE_PARAM = "page";
-%>
-
-<%String cp = request.getContextPath();%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 
@@ -33,34 +26,31 @@
 
     BoardDao boardDao = new JdbcBoardDao();
     BoardDto boardDto = boardDao.getBoardByBoardId(boardId).
-            orElseThrow(() -> new IllegalArgumentException("invalid board_id"));
+            orElseThrow(() -> new IllegalArgumentException("not exist board"));
 
     FileDao fileDao = new JdbcFileDao();
     List<FileDto> fileList = fileDao.getFileByBoardId(boardId);
 
-    String searchKey = request.getParameter(KEY_PARAM);
-    String searchCategory = request.getParameter(CATEGORY_PARAM);
-    String searchStartDate = request.getParameter(START_DATE_PARAM);
-    String searchEndDate = request.getParameter(END_DATE_PARAM);
-    String currentPage = request.getParameter(PAGE_PARAM);
-
-    String searchParam =
-            "?" +
-            "search_category=" + searchCategory +
-            "&search_key=" + searchKey +
-            "&start_date=" + searchStartDate +
-            "&end_date=" + searchEndDate +
-            "&page=" + currentPage +
-            "&board_id=" + boardId;
-
+    String searchParamWithBoardId = UrlUtil.getSearchParamWithBoardIdAndPage(request);
 %>
 <head>
     <title>Title</title>
     <link href="/css/modify.css" rel="stylesheet">
     <script type="text/javascript">
         function send(){
+            const name_pattern = /^[가-힣]{3,4}$/;
+            const title_pattern = /.{4,100}$/;
+            const content_pattern = /.{4,2000}$/;
+            const password_pattern = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{4,15}$/;
+
             let send_form = document.modify_form
-            send_form.action = "<%=cp%>/board/data/edit-board.jsp";
+
+            verify_pattern(send_form.name, name_pattern);
+            verify_pattern(send_form.title, title_pattern);
+            verify_pattern(send_form.content, content_pattern);
+            verify_pattern(send_form.password, password_pattern);
+
+            send_form.action = "/data/edit-board.jsp<%=searchParamWithBoardId%>";
             send_form.submit()
         }
 
@@ -70,31 +60,18 @@
             document.getElementsByName(str)[0].value = file_id;
         }
 
-        function verify_category(category) {
-            if (category == null) {
-                alert('select category please')
-                // send_form.title.focus()
-                throw "invalid category"
+        function verify_pattern(tag, pattern) {
+            if (!pattern.test(tag.value)) {
+                alert('invalid ' + tag.name);
+                throw "invalid " + tag.name;
             }
         }
-
-        function verify_pattern(str, pattern) {
-            const name_test_regex = /^[가-힣]{3,4}$/
-            if (!name_test_regex.test(name)) {
-                alert('correct name please')
-                throw "invalid name"
-            }
-        }
-
 
     </script>
 </head>
 <body>
-
 <div id="modify_board">
-
     <h1 id="main_title">게시판 - 수정</h1>
-
     <form action="" method="post" name="modify_form" enctype="multipart/form-data">
         <div id="modify_form">
             <input type="text" name="board_id" value="<%=boardId%>" style="display: none">
@@ -149,9 +126,10 @@
                     </td>
                 </tr>
             </table>
-        <div id="buttons">
-            <input type="button" value="취소" onclick="location.href='/board/free/view.jsp<%=searchParam%>'"/>
-            <input type="button" value="저장" onclick="send();"/>
+            <div id="buttons">
+                <input type="button" value="취소" onclick="location.href='/board/free/view.jsp<%=searchParamWithBoardId%>'"/>
+                <input type="button" value="저장" onclick="send();"/>
+            </div>
         </div>
     </form>
 

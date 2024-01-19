@@ -1,11 +1,12 @@
-<%@ page import="com.study.multipart.MultipartHandler" %>
+<%@ page import="com.study.filter.multitpart.MultipartHandler" %>
 <%@ page import="com.oreilly.servlet.MultipartRequest" %>
-<%@ page import="com.study.validate.RequestValidator" %>
 <%@ page import="com.study.board.dto.BoardModifyDto" %>
-<%@ page import="com.study.board.JdbcBoardDao" %>
-<%@ page import="com.study.board.BoardDao" %>
-<%@ page import="com.study.file.JdbcFileDao" %>
-<%@ page import="com.study.file.FileDao" %><%--
+<%@ page import="com.study.board.dao.JdbcBoardDao" %>
+<%@ page import="com.study.board.dao.BoardDao" %>
+<%@ page import="com.study.file.dao.JdbcFileDao" %>
+<%@ page import="com.study.file.dao.FileDao" %>
+<%@ page import="com.study.util.UrlUtil" %>
+<%@ page import="com.study.filter.RequestHandler" %>
   Created by IntelliJ IDEA.
   User: woong
   Date: 24. 1. 18.
@@ -20,16 +21,8 @@
     MultipartHandler multipartHandler = new MultipartHandler();
     MultipartRequest multipartRequest = multipartHandler.getMultipartRequest(request);
 
-    try {
-        RequestValidator requestValidator = new RequestValidator();
-        requestValidator.validateModifyBoardRequest(multipartRequest);
-    } catch (IllegalArgumentException e) {
-        e.printStackTrace();
-        response.sendRedirect("/error/error.jsp");
-        return;
-    }
-
-    BoardModifyDto boardModifyDto = multipartHandler.getBoardModifyDto(multipartRequest);
+    RequestHandler requestHandler = new RequestHandler();
+    BoardModifyDto boardModifyDto = requestHandler.getBoardModifyDto(multipartRequest);
 
     BoardDao boardDao = new JdbcBoardDao();
     boardDao.updateBoard(boardModifyDto);
@@ -38,5 +31,8 @@
     fileDao.deleteFileList(boardModifyDto.getDeleteFileIdList());
     fileDao.saveFileList(boardModifyDto.getCreateFileList(), boardModifyDto.getBoard_id());
 
-    response.sendRedirect("/board/free/view.jsp?board_id=" + boardModifyDto.getBoard_id());
+    String searchParamWithBoardId = UrlUtil.getSearchParamWithBoardIdAndPage(request);
+
+
+    response.sendRedirect("/board/free/view.jsp" + searchParamWithBoardId);
 %>

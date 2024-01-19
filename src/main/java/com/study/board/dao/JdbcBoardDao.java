@@ -1,19 +1,14 @@
-package com.study.board;
+package com.study.board.dao;
 
 
-import com.study.board.dto.BoardCreateDto;
-import com.study.board.dto.BoardDto;
-import com.study.board.dto.BoardListDto;
-import com.study.board.dto.BoardModifyDto;
-import com.study.comment.dto.CommentDto;
+import com.study.board.Category;
+import com.study.board.dto.*;
 import com.study.connection.ConnectionPool;
 import com.study.encryption.CipherEncrypt;
 import com.study.encryption.EncryptManager;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,31 +50,31 @@ public class JdbcBoardDao implements BoardDao{
     }
 
     @Override
-    public int getCountBySearchKeyAndCategoryAndDate(String searchKey, Category searchCategory, String searchStartDate, String searchEndDate) throws Exception{
+    public int getCountBySearchParam(BoardSearchDto boardSearchDto) throws Exception{
         Connection connection = ConnectionPool.getConnection();
         String getCountSql = "SELECT COUNT(*) FROM board WHERE (created_at BETWEEN ? AND ?)" ;
 
         String categorySearchSql = "";
-        if (!searchCategory.equals(Category.ALL)){
+        if (!boardSearchDto.getSearchCategory().equals(Category.ALL)){
             categorySearchSql = " AND (category_id = ?)";
         }
         String searchKeySql = "";
-        if (!FIND_ALL.equals(searchKey)) {
+        if (!boardSearchDto.getSearchKey().equals(FIND_ALL)) {
             searchKeySql = " AND (title LIKE ? OR name LIKE ? OR content LIKE ?)";
         }
         getCountSql = getCountSql + categorySearchSql + searchKeySql;
 
-        LocalDateTime searchStartTimestamp = LocalDateTime.of(LocalDate.parse(searchStartDate), LocalTime.MIN);
-        LocalDateTime searchEndTimestamp = LocalDateTime.of(LocalDate.parse(searchEndDate), LocalTime.MIN);
-
 
         int index = 1;
         PreparedStatement preparedStatement = connection.prepareStatement(getCountSql);
-        preparedStatement.setTimestamp(index++, Timestamp.valueOf(searchStartTimestamp));
-        preparedStatement.setTimestamp(index++, Timestamp.valueOf(searchEndTimestamp));
+        preparedStatement.setTimestamp(index++, Timestamp.valueOf(boardSearchDto.getSearchStartDate()));
+        preparedStatement.setTimestamp(index++, Timestamp.valueOf(boardSearchDto.getSearchEndDate()));
 
-        if (!searchCategory.equals(Category.ALL)) preparedStatement.setInt(index++, searchCategory.getCategoryId());
-        if (!FIND_ALL.equals(searchKey)){
+        if (!boardSearchDto.getSearchCategory().equals(Category.ALL)) {
+            preparedStatement.setInt(index++, boardSearchDto.getSearchCategory().getCategoryId());
+        }
+        if (!boardSearchDto.getSearchKey().equals(FIND_ALL)){
+            String searchKey = boardSearchDto.getSearchKey();
             preparedStatement.setString(index++, "%"+searchKey+"%");
             preparedStatement.setString(index++, "%"+searchKey+"%");
             preparedStatement.setString(index++, "%"+searchKey+"%");
@@ -99,38 +94,34 @@ public class JdbcBoardDao implements BoardDao{
     }
 
     @Override
-    public List<BoardListDto> getBoardListBySearchKeyAndCategoryAndDate(String searchKey, Category searchCategory, String searchStartDate, String searchEndDate, Integer currentPage, int pageOffset) throws Exception {
+    public List<BoardListDto> getBoardListBySearchParam(BoardSearchDto boardSearchDto, Integer currentPage, int pageOffset) throws Exception {
         Connection connection = ConnectionPool.getConnection();
-//        String getCountSql = "SELECT (category, title, name, view, created_at, modified_at) FROM board WHERE (created_at BETWEEN ? AND ?)" ;
-//        String getBoardListSql = "SELECT b.*, (SELECT (count(*) > 0) from file as f where f.board_id = b.board_id) AS count " +
-//                "FROM board AS b WHERE (created_at BETWEEN ? AND ?)" ;
 
         String getBoardListSql = "SELECT b.*, c.category, (SELECT (count(*) > 0) from file as f where f.board_id = b.board_id) AS count " +
                 "FROM board AS b LEFT JOIN category AS c ON b.category_id = c.category_id " +
                 "WHERE (created_at BETWEEN ? AND ?)" ;
 
         String categorySearchSql = "";
-        if (!searchCategory.equals(Category.ALL)){
+        if (!boardSearchDto.getSearchCategory().equals(Category.ALL)){
             categorySearchSql = " AND (b.category_id = ?)";
         }
         String searchKeySql = "";
-        if (!FIND_ALL.equals(searchKey)) {
+        if (!boardSearchDto.getSearchKey().equals(FIND_ALL)) {
             searchKeySql = " AND (title LIKE ? OR name LIKE ? OR content LIKE ?)";
         }
         String pageSql = " ORDER BY board_id DESC LIMIT ?, ?";
         getBoardListSql = getBoardListSql + categorySearchSql + searchKeySql + pageSql;
 
-        LocalDateTime searchStartTimestamp = LocalDateTime.of(LocalDate.parse(searchStartDate), LocalTime.MIN);
-        LocalDateTime searchEndTimestamp = LocalDateTime.of(LocalDate.parse(searchEndDate), LocalTime.MIN);
-
-
         int index = 1;
         PreparedStatement preparedStatement = connection.prepareStatement(getBoardListSql);
-        preparedStatement.setTimestamp(index++, Timestamp.valueOf(searchStartTimestamp));
-        preparedStatement.setTimestamp(index++, Timestamp.valueOf(searchEndTimestamp));
+        preparedStatement.setTimestamp(index++, Timestamp.valueOf(boardSearchDto.getSearchStartDate()));
+        preparedStatement.setTimestamp(index++, Timestamp.valueOf(boardSearchDto.getSearchEndDate()));
 
-        if (!searchCategory.equals(Category.ALL)) preparedStatement.setInt(index++, searchCategory.getCategoryId());
-        if (!FIND_ALL.equals(searchKey)){
+        if (!boardSearchDto.getSearchCategory().equals(Category.ALL)) {
+            preparedStatement.setInt(index++, boardSearchDto.getSearchCategory().getCategoryId());
+        }
+        if (!boardSearchDto.getSearchKey().equals(FIND_ALL)){
+            String searchKey = boardSearchDto.getSearchKey();
             preparedStatement.setString(index++, "%"+searchKey+"%");
             preparedStatement.setString(index++, "%"+searchKey+"%");
             preparedStatement.setString(index++, "%"+searchKey+"%");

@@ -1,4 +1,8 @@
-package com.study.file;
+package com.study.file.dao;
+
+import com.study.file.dto.FileCreateDto;
+import com.study.file.dto.FileDownloadDto;
+import com.study.file.dto.FileDto;
 
 import java.util.List;
 import java.util.Optional;

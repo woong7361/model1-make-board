@@ -1,4 +1,4 @@
-package com.study.multipart;
+package com.study.filter.multitpart;
 
 import com.oreilly.servlet.multipart.FileRenamePolicy;
 
@@ -8,13 +8,17 @@ import java.io.IOException;
 public class UniqueFileNamePolicy implements FileRenamePolicy {
 
     public File rename(File file) {
-        String originalFileExtension = this.getFileExtension(file.getName());
-        String newFileName = System.nanoTime() + "." + originalFileExtension;
+        String originalFileExtension = getFileExtension(file.getName());
+        String newFileName = createNewFilename(originalFileExtension);
 
         File newFile = new File(file.getParent(), newFileName);
         createNewFile(newFile);
 
         return newFile;
+    }
+
+    private String createNewFilename(String originalFileExtension) {
+        return System.nanoTime() + "." + originalFileExtension;
     }
 
     private String getFileExtension(String orginalName) {

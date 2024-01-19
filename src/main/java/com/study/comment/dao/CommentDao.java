@@ -1,4 +1,4 @@
-package com.study.comment;
+package com.study.comment.dao;
 
 import com.study.comment.dto.CommentCreateDto;
 import com.study.comment.dto.CommentDto;

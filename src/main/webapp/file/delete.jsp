@@ -1,12 +1,13 @@
 <%@ page import="java.util.Optional" %>
-<%@ page import="com.study.file.FileDao" %>
-<%@ page import="com.study.file.JdbcFileDao" %>
-<%@ page import="com.study.board.JdbcBoardDao" %>
-<%@ page import="com.study.board.BoardDao" %>
-<%@ page import="com.study.comment.JdbcCommentDao" %>
-<%@ page import="com.study.comment.CommentDao" %>
+<%@ page import="com.study.file.dao.FileDao" %>
+<%@ page import="com.study.file.dao.JdbcFileDao" %>
+<%@ page import="com.study.board.dao.JdbcBoardDao" %>
+<%@ page import="com.study.board.dao.BoardDao" %>
+<%@ page import="com.study.comment.dao.JdbcCommentDao" %>
+<%@ page import="com.study.comment.dao.CommentDao" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.io.File" %><%--
+<%@ page import="java.io.File" %>
+<%--
   Created by IntelliJ IDEA.
   User: woong
   Date: 24. 1. 18.

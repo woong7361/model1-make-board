@@ -1,6 +1,9 @@
-package com.study.file;
+package com.study.file.dao;
 
 import com.study.connection.ConnectionPool;
+import com.study.file.dto.FileCreateDto;
+import com.study.file.dto.FileDownloadDto;
+import com.study.file.dto.FileDto;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

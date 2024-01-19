@@ -6,9 +6,9 @@ public class CommentCreateDto {
     final int board_id;
     final String content;
 
-    public CommentCreateDto(HttpServletRequest request) {
-        this.board_id = Integer.parseInt(request.getParameter("board_id"));
-        this.content = request.getParameter("content");
+    public CommentCreateDto(int board_id, String content) {
+        this.board_id = board_id;
+        this.content = content;
     }
 
     public int getBoard_id() {

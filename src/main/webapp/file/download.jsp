@@ -1,9 +1,9 @@
 <%@ page import="java.io.FileInputStream" %>
 <%@ page import="java.io.File" %>
 <%@ page import="java.util.Optional" %>
-<%@ page import="com.study.file.FileDao" %>
-<%@ page import="com.study.file.JdbcFileDao" %>
-<%@ page import="com.study.file.FileDownloadDto" %><%--
+<%@ page import="com.study.file.dao.FileDao" %>
+<%@ page import="com.study.file.dao.JdbcFileDao" %>
+<%@ page import="com.study.file.dto.FileDownloadDto" %><%--
   Created by IntelliJ IDEA.
   User: woong
   Date: 24. 1. 17.
