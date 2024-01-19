@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+        #board_time {
+            margin: 0 0 0 30rem ;
+            padding: 0.5rem;
+        }
+        #board_title {
+            font-size: 20px;
+            white-space: nowrap;
+        }
+        #board_view {
+            font-size: 13px;
+            text-align: center;
+            border-block-end: solid;
+        }
+        #board_content {
+            font-size: 15px;
+            margin: 0.6rem;
+            text-align: left;
+            border: 1px solid gray;
+            min-block-size: 10rem;
+        }
+
+        #board_file {
+            margin: 1rem;
+            text-align: left;
+            min-block-size: 3rem;
+        }
+        #comment {
+            text-align: left;
+            margin: 0.6rem;
+            border: 1px solid gray;
+            min-block-size: 6rem;
+            background-color: cornsilk;
+        }
+
+    </style>
+</head>
+<body>
+
+<h1 id="main_title">게시판 -보기</h1>
+
+<div id="board">
+    <div id="board_main">
+        <div id="board_name"> <%=boardDto.getName()%> </div>
+        <div id="board_time">
+            등록일시 <%=boardDto.getCreatedAt().toString()%>
+            &nbsp&nbsp&nbsp&nbsp
+            수정일시 <%=boardDto.getModifiedAt().toString()%>
+        </div>
+        <div id="board_title">
+            [<%=boardDto.getCategory().toString()%>]
+            &nbsp&nbsp&nbsp&nbsp
+            <%=boardDto.getTitle()%>
+        </div>
+        <div id="board_view">
+            <%=boardDto.getView()+1%>
+        </div>
+        <div id="board_content">
+            <%=boardDto.getContent()%>
+        </div>
+    </div>
+
+    <div id="board_file">
+        <h3>파일 다운로드</h3>
+        <%for(FileDto fileDto : fileDtoList){ %>
+        <dl>
+            <a href="/file/download.jsp?file_id=<%=fileDto.getFileId()%>">파일 - <%=fileDto.getOriginalName()%></a>
+        </dl>
+        <%} %>
+    </div>
+
+    <div id="board_comment">
+        <h3>댓글 창</h3>
+        <%for(CommentDto comment : commentList){ %>
+        <dl id="comment">
+            <dd class="created_at"><%=comment.getCreatedAt() %></dd>
+            <dd class="content"><%=comment.getContent()%></dd>
+        </dl>
+        <%} %>
+        <form action="" method="post" name="create_form">
+            <textarea rows="10" cols="20" name="content"></textarea>
+            <input type="hidden" name="board_id" value="<%=boardDto.getBoardId()%>">
+            <input type="button" value="등록" onclick="send()">
+        </form>
+    </div>
+
+    <div id="board_footer">
+        <button><a href="/board/free/list.jsp<%=searchParam%>">목록</a></button>
+        <button><a href="/board/free/modify.jsp<%=searchParam%>">수정</a></button>
+        <button><a href="/file/delete.jsp?board_id=<%=boardId%>">삭제</a></button>
+    </div>
+
+
+</body>
+</html>

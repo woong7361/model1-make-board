@@ -79,6 +79,7 @@
 <html>
 <head>
     <title>list view</title>
+    <link href="/css/list.css" rel="stylesheet">
     <script type="text/javascript">
 
         function search(){
@@ -100,19 +101,20 @@
 </head>
 <body>
 <div id="list">
-    <div id="list_title">자유 게시판 - 목록</div>
+    <h1>자유 게시판 - 목록</h1>
     <div id="list_search">
         <form action="" method="get" name="search_form">
+            등록일
             <input type="date" name="start_date" value="2024-01-01" min="2023-01-01" max="2025-12-12">
             ~
             <input type="date" name="end_date" value="2025-01-01" min="2023-01-01" max="2025-12-12">
             <select name="search_category">
-                <option value="ALL">ALL</option>
+                <option value="ALL">전체 카테고리</option>
                 <option value="JAVA">JAVA</option>
                 <option value="JAVASCRIPT">JAVASCRIPT</option>
                 <option value="DATABASE">DATABASE</option>
             </select>
-            <input type="text" name="search_key"/>
+            <input type="text" name="search_key" placeholder="검색어를 입력하세요"/>
             <input type="button" value=" 검 색 " onclick="search();"/>
         </form>
     </div>
@@ -122,47 +124,46 @@
     </div>
 
     <div id="main_list">
-        <div id="title">
-            <dl>
-                <dt class="num">카테고리</dt>
-                <dt class="subject">제목</dt>
-                <dt class="name">작성자</dt>
-                <dt class="created">조회수</dt>
-                <dt class="hitCount">등록일시</dt>
-                <dt class="hitCount">수정일시</dt>
-            </dl>
+        <table>
+            <thead>
+            <tr>
+                <th>카테고리</th>
+                <th></th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>조회수</th>
+                <th>등록 일시</th>
+                <th>수정 일시</th>
+            </tr>
+            </thead>
+            <tbody>
+                <%for(BoardListDto board : boardList){ %>
+                <tr>
+                    <td><%=board.getCategory().toString()%></td>
+                    <td><%=board.isHavaFile()%></td>
+                    <td>
+                        <a href="/board/free/view.jsp<%=searchParam%>&page=<%=currentPage%>&board_id=<%=board.getBoardId()%>">
+                            <%=board.getTitle() %>
+                        </a>
+                    </td>
+                    <td><%=board.getName() %></td>
+                    <td><%=board.getView() %></td>
+                    <td><%=board.getCreatedAt() %></td>
+                    <td><%=board.getModifiedAt() %></td>
+                </tr>
+                <%} %>
+            </tbody>
+        </table>
+            <div id="page_link">
+                <%=pageLinkList%>
+            </div>
         </div>
 
-        <div id="lists">
-            <%for(BoardListDto board : boardList){ %>
-            <dl>
-                <dd class="category"><%=board.getCategory().toString()%></dd>
-                <dd class="category"><%=board.isHavaFile()%></dd>
-                <dd class="title">
-<%--                    <a href="<%=articleUrl %>&num=<%=dto.getNum()%>">--%>
-                    <a href="/board/free/view.jsp<%=searchParam%>&page=<%=currentPage%>&board_id=<%=board.getBoardId()%>">
-                        <%=board.getTitle() %>
-                    </a>
-                </dd>
-                <dd class="name"><%=board.getName() %></dd>
-                <dd class="view"><%=board.getView() %></dd>
-                <dd class="created_at"><%=board.getCreatedAt() %></dd>
-                <dd class="modified_at"><%=board.getModifiedAt() %></dd>
-            </dl>
-            <%} %>
-        </div>
-            <%=pageLinkList%>
 
         <div id="create_board_link">
-            <button><a href="/board/free/write.jsp">등록</a></button>
+            <button onclick="location.href='/board/free/write.jsp';">등록</button>
         </div>
     </div>
-
-
-
-
-
-
 </div>
 </body>
 </html>

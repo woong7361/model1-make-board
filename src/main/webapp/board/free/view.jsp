@@ -63,11 +63,10 @@
             "&end_date=" + searchEndDate +
             "&page=" + currentPage +
             "&board_id=" + boardId;
-
-
 %>
 
 </head>
+    <link href="/css/view.css" rel="stylesheet">
     <script type="text/javascript">
         function send(){
             let create_form = document.create_form
@@ -84,7 +83,6 @@
                 }
             }
         }
-
     </script>
 <body>
 <div id="board">
@@ -92,20 +90,19 @@
         게시판 -보기
     </div>
     <div id="board_main">
-        <div id="board_category">
-            <%=boardDto.getCategory().toString()%>
+        <div id="board_name"> <%=boardDto.getName()%> </div>
+        <div id="board_time">
+            등록일시 <%=boardDto.getCreatedAt().toString()%>
+            &nbsp&nbsp&nbsp&nbsp
+            수정일시 <%=boardDto.getModifiedAt().toString()%>
         </div>
         <div id="board_title">
-            <%=boardDto.getTitle().toString()%>
-        </div>
-        <div id="board_created_at">
-            <%=boardDto.getCreatedAt().toString()%>
-        </div>
-        <div id="board_modified_at">
-            <%=boardDto.getModifiedAt().toString()%>
+            [<%=boardDto.getCategory().toString()%>]
+            &nbsp&nbsp&nbsp&nbsp
+            <%=boardDto.getTitle()%>
         </div>
         <div id="board_view">
-            <%=boardDto.getView()+1%>
+            조회수: <%=boardDto.getView()+1%>
         </div>
         <div id="board_content">
             <%=boardDto.getContent()%>
@@ -116,7 +113,7 @@
         <h3>파일 다운로드</h3>
         <%for(FileDto fileDto : fileDtoList){ %>
         <dl>
-            <a href="/file/download.jsp?file_id=<%=fileDto.getFileId()%>">파일 - <%=fileDto.getOriginalName()%></a>
+            <a href="/file/download.jsp?file_id=<%=fileDto.getFileId()%>">＊ 파일 - <%=fileDto.getOriginalName()%></a>
         </dl>
         <%} %>
     </div>
@@ -124,22 +121,22 @@
     <div id="board_comment">
         <h3>댓글 창</h3>
         <%for(CommentDto comment : commentList){ %>
-        <dl>
+        <dl id="comment">
             <dd class="created_at"><%=comment.getCreatedAt() %></dd>
             <dd class="content"><%=comment.getContent()%></dd>
         </dl>
         <%} %>
         <form action="" method="post" name="create_form">
-            <textarea rows="10" cols="20" name="content"></textarea>
+            <textarea rows="7" cols="100" name="content"></textarea>
             <input type="hidden" name="board_id" value="<%=boardDto.getBoardId()%>">
             <input type="button" value="등록" onclick="send()">
         </form>
     </div>
 
     <div id="board_footer">
-        <button><a href="/board/free/list.jsp<%=searchParam%>">목록</a></button>
-        <button><a href="/board/free/modify.jsp<%=searchParam%>">수정</a></button>
-        <button><a href="/file/delete.jsp?board_id=<%=boardId%>">삭제</a></button>
+        <button onclick="location.href='/board/free/list.jsp<%=searchParam%>'">목록</button>
+        <button onclick="location.href='/board/free/modify.jsp<%=searchParam%>'">수정</button>
+        <button onclick="location.href='/file/delete.jsp?board_id=<%=boardId%>'">삭제</button>
     </div>
 </div>
 </body>

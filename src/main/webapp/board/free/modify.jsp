@@ -56,6 +56,7 @@
 %>
 <head>
     <title>Title</title>
+    <link href="/css/modify.css" rel="stylesheet">
     <script type="text/javascript">
         function send(){
             let send_form = document.modify_form
@@ -84,7 +85,6 @@
                 throw "invalid name"
             }
         }
-        url.searchParams.get("")
 
 
     </script>
@@ -93,92 +93,48 @@
 
 <div id="modify_board">
 
-    <div id="main_title">
-        게시판 수정
-    </div>
+    <h1 id="main_title">게시판 - 수정</h1>
 
     <form action="" method="post" name="modify_form" enctype="multipart/form-data">
         <div id="modify_form">
-            <div id="board_id" style="display: none">
-                <input type="text" name="board_id" value="<%=boardId%>">
-            </div>
-            <div id="category">
-                <dl>
-                    <dt>카테고리*</dt>
-                    <dd>
-                        <%=boardDto.getCategory().name()%>
-                    </dd>
-                </dl>
-            </div>
-
-            <div id="created_at">
-                <dl>
-                    <dt>등록 일시</dt>
-                    <dd>
-                        <%=boardDto.getCreatedAt().toString()%>
-                    </dd>
-                </dl>
-            </div>
-
-            <div id="modified_at">
-                <dl>
-                    <dt>수정 일시</dt>
-                    <dd>
-                        <%=boardDto.getModifiedAt().toString()%>
-                    </dd>
-                </dl>
-            </div>
-
-            <div id="views">
-                <dl>
-                    <dt>조회수</dt>
-                    <dd>
-                        <%=boardDto.getView()%>
-                    </dd>
-                </dl>
-            </div>
-
-            <div id="name">
-                <dl>
-                    <dt>작성자*</dt>
-                    <dd>
-                        <input type="text" name="name" value="<%=boardDto.getName()%>"/>
-                    </dd>
-                </dl>
-            </div>
-
-            <div id="password">
-                <dl>
-                    <dt>비밀번호*</dt>
-                    <dd>
-                        <input type="text" name="password"/>
-                    </dd>
-                </dl>
-            </div>
-
-            <div id="title">
-                <dl>
-                    <dt>제목*</dt>
-                    <dd>
-                        <input type="text" name="title" value="<%=boardDto.getTitle()%>"/>
-                    </dd>
-                </dl>
-            </div>
-
-            <div id="content">
-                <dl>
-                    <dt>내용*</dt>
-                    <dd>
-                        <textarea rows="10" cols="20" name="content"><%=boardDto.getContent()%></textarea>
-                    </dd>
-                </dl>
-
-            </div>
-            <div id="file">
-                <dl>
-                    <dt>파일 첨부</dt>
+            <input type="text" name="board_id" value="<%=boardId%>" style="display: none">
+            <table>
+                <tr>
+                    <th>카테고리</th>
+                    <td><%=boardDto.getCategory().name()%></td>
+                </tr>
+                <tr>
+                    <th>등록 일시</th>
+                    <td><%=boardDto.getCreatedAt().toString()%></td>
+                </tr>
+                <tr>
+                    <th>수정 일시</th>
+                    <td><%=boardDto.getModifiedAt().toString()%></td>
+                </tr>
+                <tr>
+                    <th>조회수</th>
+                    <td><%=boardDto.getView()%></td>
+                </tr>
+                <tr>
+                    <th>작성자</th>
+                    <td><input type="text" name="name" value="<%=boardDto.getName()%>"/></td>
+                </tr>
+                <tr>
+                    <th>비밀번호</th>
+                    <td><input type="text" name="password"/></td>
+                </tr>
+                <tr>
+                    <th>제목</th>
+                    <td><input type="text" name="title"/></td>
+                </tr>
+                <tr>
+                    <th>내용</th>
+                    <td><textarea  cols="80" rows="10"  name="content"><%=boardDto.getContent()%></textarea></td>
+                </tr>
+                <tr>
+                    <th>파일 첨부</th>
+                    <td>
                     <%for(int i = 1; i < 4; i++){ %>
-                    <dd>
                         <%if(fileList.isEmpty()) {%>
                             <input type="file" name="file_add<%=i%>"/>
                         <%} else {%>
@@ -189,12 +145,10 @@
                                 <input type="button" name="file_delete<%=i%>" value="X" onclick="file_delete('file_delete<%=i%>', <%=file.getFileId()%>)">
                             </div>
                         <%} %>
-                    </dd>
                     <%} %>
-                </dl>
-            </div>
-        </div>
-
+                    </td>
+                </tr>
+            </table>
         <div id="buttons">
             <input type="button" value="취소" onclick="location.href='/board/free/view.jsp<%=searchParam%>'"/>
             <input type="button" value="저장" onclick="send();"/>

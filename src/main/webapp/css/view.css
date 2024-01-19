@@ -1,0 +1,41 @@
+#board_time {
+    margin: 0 0 0 30rem ;
+    padding: 0.5rem;
+}
+#board_title {
+    font-size: 20px;
+    white-space: nowrap;
+}
+#board_view {
+    font-size: 13px;
+    text-align: center;
+    border-block-end: solid;
+}
+#board_content {
+    font-size: 15px;
+    margin: 0.6rem;
+    text-align: left;
+    border: 1px solid gray;
+    min-block-size: 10rem;
+}
+
+#board_file {
+    margin: 1rem;
+    text-align: left;
+    min-block-size: 3rem;
+}
+#comment {
+    text-align: left;
+    margin: 0.6rem;
+    border: 1px solid gray;
+    min-block-size: 6rem;
+    background-color: cornsilk;
+}
+#board_footer {
+    text-align: center;
+}
+input, button{
+    margin: 0.3rem;
+    padding: 0.3rem;
+    min-width: 4rem;
+}
