@@ -82,11 +82,11 @@
                 </tr>
                 <tr>
                     <th>등록 일시</th>
-                    <td><%=boardDto.getCreatedAt().toString()%></td>
+                    <td><%=boardDto.getCreatedAtString()%></td>
                 </tr>
                 <tr>
                     <th>수정 일시</th>
-                    <td><%=boardDto.getModifiedAt().toString()%></td>
+                    <td><%=boardDto.getModifiedAt()%></td>
                 </tr>
                 <tr>
                     <th>조회수</th>

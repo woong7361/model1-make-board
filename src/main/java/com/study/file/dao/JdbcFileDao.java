@@ -8,6 +8,7 @@ import com.study.file.dto.FileDto;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +16,7 @@ import java.util.Optional;
 public class JdbcFileDao implements FileDao{
 
     @Override
-    public void saveFileList(List<FileCreateDto> fileList, int boardId) throws Exception{
+    public void saveFileListIdList(List<FileCreateDto> fileList, int boardId) throws SQLException {
         Connection connection = ConnectionPool.getConnection();
         String createFileSql = "INSERT INTO file (" +
                 "original_name, name, path, extension, board_id) " +
@@ -37,7 +38,7 @@ public class JdbcFileDao implements FileDao{
     }
 
     @Override
-    public List<FileDto> getFileByBoardId(int boardId) throws Exception {
+    public List<FileDto> getFileByBoardId(int boardId) throws SQLException {
         Connection connection = ConnectionPool.getConnection();
         String getFileSql = "SELECT * FROM file AS f WHERE (f.board_id = ?)";
 
@@ -60,7 +61,7 @@ public class JdbcFileDao implements FileDao{
     }
 
     @Override
-    public Optional<FileDownloadDto> getFileByFileId(int fileId) throws Exception {
+    public Optional<FileDownloadDto> getFileByFileId(int fileId) throws SQLException {
         Connection connection = ConnectionPool.getConnection();
         String getFileSql = "SELECT * FROM file WHERE (file_id = ?)";
 
@@ -85,7 +86,7 @@ public class JdbcFileDao implements FileDao{
     }
 
     @Override
-    public void deleteFileList(List<Integer> deleteFileIdList) throws Exception {
+    public void deleteFileByListIdList(List<Integer> deleteFileIdList) throws SQLException {
         Connection connection = ConnectionPool.getConnection();
 
         for (Integer fileId : deleteFileIdList) {
@@ -101,7 +102,7 @@ public class JdbcFileDao implements FileDao{
     }
 
     @Override
-    public void deleteByBoardId(int boardId) throws Exception {
+    public void deleteByBoardId(int boardId) throws SQLException {
         Connection connection = ConnectionPool.getConnection();
         String deleteSql = "DELETE FROM file WHERE board_id = ?";
 
@@ -114,7 +115,7 @@ public class JdbcFileDao implements FileDao{
     }
 
     @Override
-    public List<String> getFilePathListByBoardId(int boardId) throws Exception {
+    public List<String> getFilePathListByBoardId(int boardId) throws SQLException {
         Connection connection = ConnectionPool.getConnection();
         String deleteSql = "SELECT path FROM file WHERE board_id = ?";
 
@@ -129,6 +130,30 @@ public class JdbcFileDao implements FileDao{
 
         resultSet.close();
         preparedStatement.close();
+        connection.close();
+
+        return filePathList;
+    }
+
+    @Override
+    public List<String> getFilePathListByIdList(List<Integer> FileIdList) throws SQLException {
+        Connection connection = ConnectionPool.getConnection();
+
+        List<String> filePathList = new ArrayList<>();
+        for (Integer fileId : FileIdList) {
+            String deleteFileSql = "SELECT path FROM file WHERE (file_id = ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(deleteFileSql);
+            preparedStatement.setInt(1, fileId);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                filePathList.add(resultSet.getString("path"));
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+        }
+
         connection.close();
 
         return filePathList;

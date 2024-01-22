@@ -17,7 +17,7 @@ public class JdbcBoardDao implements BoardDao{
     public static final String FIND_ALL = "ALL";
 
     @Override
-    public int saveBoard(BoardCreateDto boardCreateDto) throws Exception{
+    public int saveBoard(BoardCreateDto boardCreateDto) throws SQLException{
         Connection connection = ConnectionPool.getConnection();
         String createBoardSql = "INSERT INTO board (" +
                 "category_id, name, password, title, " +
@@ -50,7 +50,7 @@ public class JdbcBoardDao implements BoardDao{
     }
 
     @Override
-    public int getCountBySearchParam(BoardSearchDto boardSearchDto) throws Exception{
+    public int getCountBySearchParam(BoardSearchDto boardSearchDto) throws SQLException{
         Connection connection = ConnectionPool.getConnection();
         String getCountSql = "SELECT COUNT(*) FROM board WHERE (created_at BETWEEN ? AND ?)" ;
 
@@ -94,7 +94,7 @@ public class JdbcBoardDao implements BoardDao{
     }
 
     @Override
-    public List<BoardListDto> getBoardListBySearchParam(BoardSearchDto boardSearchDto, Integer currentPage, int pageOffset) throws Exception {
+    public List<BoardListDto> getBoardListBySearchParam(BoardSearchDto boardSearchDto, Integer currentPage, int pageOffset) throws SQLException {
         Connection connection = ConnectionPool.getConnection();
 
         String getBoardListSql = "SELECT b.*, c.category, (SELECT (count(*) > 0) from file as f where f.board_id = b.board_id) AS count " +
@@ -156,7 +156,7 @@ public class JdbcBoardDao implements BoardDao{
     }
 
     @Override
-    public Optional<BoardDto> getBoardByBoardId(int boardId) throws Exception{
+    public Optional<BoardDto> getBoardByBoardId(int boardId) throws SQLException{
         Connection connection = ConnectionPool.getConnection();
         String getBoardSql =
                 "SELECT b.*, (SELECT category FROM category AS c WHERE b.category_id = c.category_id) AS category " +
@@ -191,7 +191,7 @@ public class JdbcBoardDao implements BoardDao{
     }
 
     @Override
-    public void addBoardViewByBoardId(int boardId) throws Exception{
+    public void addBoardViewByBoardId(int boardId) throws SQLException{
         Connection connection = ConnectionPool.getConnection();
         String getBoardSql = "UPDATE board SET view = (view+1) WHERE board_id = ?";
 
@@ -205,7 +205,7 @@ public class JdbcBoardDao implements BoardDao{
     }
 
     @Override
-    public void updateBoard(BoardModifyDto boardModifyDto) throws Exception {
+    public void updateBoard(BoardModifyDto boardModifyDto) throws SQLException {
         Connection connection = ConnectionPool.getConnection();
 
         String updateBoardSql = "UPDATE board " +
@@ -230,7 +230,7 @@ public class JdbcBoardDao implements BoardDao{
     }
 
     @Override
-    public void deleteByBoardId(int boardId) throws Exception {
+    public void deleteByBoardId(int boardId) throws SQLException {
         Connection connection = ConnectionPool.getConnection();
         String deleteSql = "DELETE FROM board WHERE board_id = ?";
 

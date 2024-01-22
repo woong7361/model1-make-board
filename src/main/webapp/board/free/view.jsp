@@ -62,6 +62,7 @@
                 throw "invalid " + tag.name;
             }
         }
+
     </script>
 <body>
 <div id="board">
@@ -71,9 +72,9 @@
     <div id="board_main">
         <div id="board_name"> <%=boardDto.getName()%> </div>
         <div id="board_time">
-            등록일시 <%=boardDto.getCreatedAt().toString()%>
+            등록일시 <%=boardDto.getCreatedAtString()%>
             &nbsp&nbsp&nbsp&nbsp
-            수정일시 <%=boardDto.getModifiedAt().toString()%>
+            수정일시 <%=boardDto.getModifiedAt()%>
         </div>
         <div id="board_title">
             [<%=boardDto.getCategory().toString()%>]
@@ -101,7 +102,7 @@
         <h3>댓글 창</h3>
         <%for(CommentDto comment : commentList){ %>
         <dl id="comment">
-            <dd class="created_at"><%=comment.getCreatedAt() %></dd>
+            <dd class="created_at"><%=comment.getCreatedAtString() %></dd>
             <dd class="content"><%=comment.getContent()%></dd>
         </dl>
         <%} %>
@@ -115,7 +116,7 @@
     <div id="board_footer">
         <button onclick="location.href='/board/free/list.jsp<%=searchParamWithBoardId%>'">목록</button>
         <button onclick="location.href='/board/free/modify.jsp<%=searchParamWithBoardId%>'">수정</button>
-        <button onclick="location.href='/file/delete.jsp?board_id=<%=boardId%>'">삭제</button>
+        <button onclick="location.href='/data/delete-board.jsp<%=searchParamWithBoardId%>'">삭제</button>
     </div>
 </div>
 </body>

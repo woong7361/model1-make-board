@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%!
-    private static final int PAGE_OFFSET = 2;
+    private static final int PAGE_OFFSET = 3;
 %>
 <%
     request.setCharacterEncoding("UTF-8");
@@ -79,7 +79,11 @@
                 <%for(BoardListDto board : boardList){ %>
                 <tr>
                     <td><%=board.getCategory().toString()%></td>
-                    <td><%=board.isHavaFile()%></td>
+                    <%if (board.isHavaFile()) {%>
+                        <td style="text-align: center"> ＊ </td>
+                    <%} else {%>
+                        <td></td>
+                    <%} %>
                     <td>
                         <a href="/board/free/view.jsp<%=searchParam%>&page=<%=currentPage%>&board_id=<%=board.getBoardId()%>">
                             <%=board.getTitle() %>
@@ -87,20 +91,22 @@
                     </td>
                     <td><%=board.getName() %></td>
                     <td><%=board.getView() %></td>
-                    <td><%=board.getCreatedAt() %></td>
-                    <td><%=board.getModifiedAt() %></td>
+                    <td><%=board.getCreatedAtString() %></td>
+                    <%if (board.getCreatedAtString().equals(board.getModifiedAtString())) {%>
+                        <td style="text-align: center"> - </td>
+                    <%} else {%>
+                        <td><%=board.getModifiedAtString() %></td>
+                    <%} %>
                 </tr>
                 <%} %>
             </tbody>
         </table>
-            <div id="page_link">
-                <%=pageLinkList%>
-            </div>
+            <div id="page_link"><%=pageLinkList%></div>
         </div>
 
 
         <div id="create_board_link">
-            <button onclick="location.href='/board/free/write.jsp';">등록</button>
+            <button onclick="location.href='/board/free/write.jsp<%=searchParam%>';">등록</button>
         </div>
     </div>
 </div>

@@ -1,6 +1,7 @@
 package com.study.comment.dto;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class CommentDto {
     private final int commentId;
@@ -21,7 +22,7 @@ public class CommentDto {
         return content;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public String getCreatedAtString() {
+        return createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 }

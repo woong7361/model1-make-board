@@ -7,6 +7,8 @@
 <%@ page import="com.study.comment.dao.CommentDao" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.io.File" %>
+<%@ page import="com.study.util.UrlUtil" %>
+<%@ page import="com.study.filter.RequestHandler" %>
 <%--
   Created by IntelliJ IDEA.
   User: woong
@@ -17,9 +19,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
-    int boardId = Optional.ofNullable(request.getParameter("board_id"))
-            .map((id) -> Integer.parseInt(id))
-            .orElseThrow(() -> new IllegalArgumentException("invalid boardId"));
+    RequestHandler requestHandler = new RequestHandler();
+    int boardId = requestHandler.getBoardId(request);
+
 
     CommentDao commentDao = new JdbcCommentDao();
     commentDao.deleteByBoardId(boardId);
@@ -35,5 +37,7 @@
     BoardDao boardDao = new JdbcBoardDao();
     boardDao.deleteByBoardId(boardId);
 
-    response.sendRedirect("/board/free/list.jsp");
+    String searchParam = UrlUtil.getSearchParam(request);
+    response.sendRedirect("/board/free/list.jsp"+searchParam);
+    //TODO: 메모
 %>

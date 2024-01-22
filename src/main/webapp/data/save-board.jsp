@@ -10,6 +10,7 @@
 <%@ page import="com.study.filter.PatternValidator" %>
 <%@ page import="com.study.board.dao.JdbcBoardDao" %>
 <%@ page import="com.study.board.dao.BoardDao" %>
+<%@ page import="com.study.util.UrlUtil" %>
 <%--
   Created by IntelliJ IDEA.
   User: woong
@@ -37,10 +38,10 @@
     int boardId = BoardDao.saveBoard(boardCreateDto);
 
     FileDao fileDao = new JdbcFileDao();
-    fileDao.saveFileList(boardCreateDto.getFileList(), boardId);
+    fileDao.saveFileListIdList(boardCreateDto.getFileList(), boardId);
 
 
-    response.sendRedirect("/board/free/list.jsp");
+    response.sendRedirect("/board/free/view.jsp?board_id=" + boardId);
 %>
 
 </body>

@@ -3,6 +3,7 @@
 <html>
 <head>
     <title>JSP - Hello World</title>
+
 </head>
 <body>
 <h1><%= "Hello World!" %>
@@ -10,5 +11,6 @@
 <br/>
 <a href="/board/free/list.jsp">go list page</a>
 <a href="/board/free/write.jsp">go create page</a>
+
 </body>
 </html>

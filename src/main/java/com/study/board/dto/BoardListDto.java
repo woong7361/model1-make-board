@@ -2,8 +2,8 @@ package com.study.board.dto;
 
 import com.study.board.Category;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class BoardListDto {
     private final int boardId;
@@ -46,12 +46,12 @@ public class BoardListDto {
         return view;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public String getCreatedAtString() {
+        return createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
-    public LocalDateTime getModifiedAt() {
-        return modifiedAt;
+    public String getModifiedAtString() {
+        return modifiedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
     public boolean isHavaFile() {

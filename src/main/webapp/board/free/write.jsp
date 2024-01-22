@@ -1,4 +1,4 @@
-<%--
+<%@ page import="com.study.util.UrlUtil" %><%--
   Created by IntelliJ IDEA.
   User: woong
   Date: 24. 1. 13.
@@ -6,7 +6,9 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
+<%
+    String searchParam = UrlUtil.getSearchParam(request);
+%>
 <link href="/css/write.css" rel="stylesheet">
 <html>
 <head>
@@ -92,7 +94,7 @@
         </div>
 
         <div id="buttons">
-            <input type="button" value="취소" onclick="location.href='/board/free/list.jsp';"/>
+            <input type="button" value="취소" onclick="location.href='/board/free/list.jsp<%=searchParam%>';"/>
             <input type="button" value="등록" onclick="send();"/>
         </div>
     </form>

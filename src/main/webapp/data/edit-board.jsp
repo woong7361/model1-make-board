@@ -7,7 +7,9 @@
 <%@ page import="com.study.file.dao.FileDao" %>
 <%@ page import="com.study.util.UrlUtil" %>
 <%@ page import="com.study.filter.RequestHandler" %>
-  Created by IntelliJ IDEA.
+<%@ page import="java.util.List" %>
+<%@ page import="java.io.File" %>
+Created by IntelliJ IDEA.
   User: woong
   Date: 24. 1. 18.
   Time: 오후 4:08
@@ -28,11 +30,15 @@
     boardDao.updateBoard(boardModifyDto);
 
     FileDao fileDao = new JdbcFileDao();
-    fileDao.deleteFileList(boardModifyDto.getDeleteFileIdList());
-    fileDao.saveFileList(boardModifyDto.getCreateFileList(), boardModifyDto.getBoard_id());
+    List<String> filePathList = fileDao.getFilePathListByIdList(boardModifyDto.getDeleteFileIdList());
+    fileDao.deleteFileByListIdList(boardModifyDto.getDeleteFileIdList());
+    fileDao.saveFileListIdList(boardModifyDto.getCreateFileList(), boardModifyDto.getBoard_id());
+
+    for (String path : filePathList) {
+        File file = new File(path);
+        file.delete();
+    }
 
     String searchParamWithBoardId = UrlUtil.getSearchParamWithBoardIdAndPage(request);
-
-
     response.sendRedirect("/board/free/view.jsp" + searchParamWithBoardId);
 %>

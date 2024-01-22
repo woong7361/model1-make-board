@@ -8,6 +8,9 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+/**
+ *
+ */
 public class PatternValidator {
     static final String CATEGORY_PARAM = "category";
     static final String PASSWORD_PARAM = "password";
@@ -24,6 +27,10 @@ public class PatternValidator {
     static final String CONTENT_PATTERN = ".{4,2000}$";
     static final String PK_PATTERN = "^[0-9]+$";
 
+    /**
+     * 이 메서드의 의도.
+     * @param multipartRequest 파라미터 설명
+     */
     public void validateCreateBoardRequest(MultipartRequest multipartRequest) {
         this.validateBoardCategory(multipartRequest.getParameter(CATEGORY_PARAM));
         this.validateParameterPattern(multipartRequest.getParameter(PASSWORD_PARAM), PASSWORD_PATTERN);

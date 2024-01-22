@@ -4,17 +4,14 @@ import com.study.comment.dto.CommentCreateDto;
 import com.study.comment.dto.CommentDto;
 import com.study.connection.ConnectionPool;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcCommentDao implements CommentDao{
     @Override
-    public void saveComment(CommentCreateDto commentCreateDto) throws Exception {
+    public void saveComment(CommentCreateDto commentCreateDto) throws SQLException {
         Connection connection = ConnectionPool.getConnection();
 
         String createCommentSql = "INSERT INTO comment (" +
@@ -32,7 +29,7 @@ public class JdbcCommentDao implements CommentDao{
     }
 
     @Override
-    public List<CommentDto> getCommentByBoardId(int boardId) throws Exception {
+    public List<CommentDto> getCommentByBoardId(int boardId) throws SQLException {
         Connection connection = ConnectionPool.getConnection();
         String getCommentSql = "SELECT * FROM comment WHERE board_id = ?";
 
@@ -57,7 +54,7 @@ public class JdbcCommentDao implements CommentDao{
     }
 
 
-    public void deleteByBoardId(int boardId) throws Exception {
+    public void deleteByBoardId(int boardId) throws SQLException {
         Connection connection = ConnectionPool.getConnection();
         String deleteSql = "DELETE FROM comment WHERE board_id = ?";
 

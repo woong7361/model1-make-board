@@ -95,6 +95,10 @@ public class RequestHandler {
         );
     }
 
+    public int getBoardId(HttpServletRequest request) {
+        return getIntParameterOrElseThrow(request, BOARD_ID_PARAM);
+    }
+
 //    ------------------------------------------------------------------------------------------------------------------
 
     private String getStringParameterWithDefaultValue(HttpServletRequest request, String parameter, String defaultValue) {
@@ -116,6 +120,12 @@ public class RequestHandler {
         return Optional.ofNullable(request.getParameter(parameter))
                 .map((p) -> LocalDateTime.of(LocalDate.parse(p), LocalTime.MIN))
                 .orElse(defaultValue);
+    }
+
+    private int getIntParameterOrElseThrow(HttpServletRequest request, String parameter) {
+        return Optional.ofNullable(request.getParameter(parameter))
+                .map((p) -> Integer.parseInt(p))
+                .orElseThrow(() -> new IllegalArgumentException("invalid parameter " + parameter));
     }
 
     private List<FileCreateDto> getFileCreateDtoList(MultipartRequest multipartRequest) {
@@ -164,4 +174,6 @@ public class RequestHandler {
         String extension = nameSplitList[nameSplitList.length - 1];
         return extension;
     }
+
+
 }
