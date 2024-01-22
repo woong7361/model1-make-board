@@ -30,7 +30,7 @@
 
             let create_form = document.create_form
             verify_pattern(create_form.content, content_pattern)
-            create_form.action = "/controller/board/create<%=searchParamWithBoardId%>";
+            create_form.action = "/controller/comment/create<%=searchParamWithBoardId%>";
             create_form.submit()
         }
 

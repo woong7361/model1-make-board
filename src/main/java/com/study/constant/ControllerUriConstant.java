@@ -12,4 +12,5 @@ public class ControllerUriConstant {
     public static final String BOARD_UPDATE_CONTROLLER_URI = "/controller/board/update";
     public static final String BOARD_DELETE_CONTROLLER_URI = "/controller/board/delete";
     public static final String BOARD_WRITE_VIEW_CONTROLLER_URI = "/controller/board/view/write";
+    public static final String COMMENT_CREATE_CONTROLLER_URI = "/controller/comment/create";
 }

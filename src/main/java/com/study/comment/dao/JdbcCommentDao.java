@@ -12,21 +12,24 @@ import java.util.List;
 
 public class JdbcCommentDao implements CommentDao{
     @Override
-    public void saveComment(CommentCreateDto commentCreateDto) throws SQLException {
-        Connection connection = ConnectionPool.getConnection();
-
+    public void saveComment(CommentCreateDto commentCreateDto) {
         String createCommentSql = "INSERT INTO comment (" +
                 "content, created_at, board_id) " +
                 "VALUES (?, ?, ?)";
 
-        PreparedStatement preparedStatement = connection.prepareStatement(createCommentSql);
-        preparedStatement.setString(1, commentCreateDto.getContent());
-        preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
-        preparedStatement.setInt(3, commentCreateDto.getBoard_id());
-        preparedStatement.executeUpdate();
+        try(
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(createCommentSql);
+                ){
 
-        preparedStatement.close();
-        connection.close();
+            preparedStatement.setString(1, commentCreateDto.getContent());
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatement.setInt(3, commentCreateDto.getBoard_id());
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new WrapCheckedException("sql Exception", e);
+        }
     }
 
     @Override
