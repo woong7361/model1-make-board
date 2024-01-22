@@ -7,6 +7,7 @@ import com.study.board.dto.BoardModifyDto;
 import com.study.board.dto.BoardSearchDto;
 import com.study.comment.dto.CommentCreateDto;
 import com.study.file.dto.FileCreateDto;
+import com.study.filter.multitpart.MultipartHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -37,6 +38,8 @@ public class RequestHandler {
 //    private static final List<String> FILE_CREATE_PARAM_LIST = Arrays.asList("file_add1", "file_add2", "file_add3");
 //    private static final List<String> FILE_DELETE_PARAM_LIST = Arrays.asList("file_delete1", "file_delete2", "file_delete3");
 
+
+    private final MultipartHandler multipartHandler = new MultipartHandler();
     private static PatternValidator patternValidator = new PatternValidator();
 
     public BoardSearchDto getBoardSearchDto(HttpServletRequest request) {
@@ -54,6 +57,29 @@ public class RequestHandler {
 
 
     public BoardCreateDto getBoardCreateDto(MultipartRequest multipartRequest) {
+        patternValidator.validateCreateBoardRequest(multipartRequest);
+
+        List<FileCreateDto> fileList = this.getFileCreateDtoList(multipartRequest);
+
+        return new BoardCreateDto(
+                Category.valueOf(multipartRequest.getParameter(CATEGORY_PARAM)),
+                multipartRequest.getParameter(NAME_PARAM),
+                multipartRequest.getParameter(PASSWORD_PARAM),
+                multipartRequest.getParameter(TITLE_PARAM),
+                multipartRequest.getParameter(CONTENT_PARAM),
+                fileList
+        );
+    }
+
+    /**
+     * get BoardCreateDto By Request
+     *
+     * @param request
+     * @return
+     */
+    public BoardCreateDto getBoardCreateDto(HttpServletRequest request) {
+        MultipartRequest multipartRequest = multipartHandler.getMultipartRequest(request);
+
         patternValidator.validateCreateBoardRequest(multipartRequest);
 
         List<FileCreateDto> fileList = this.getFileCreateDtoList(multipartRequest);

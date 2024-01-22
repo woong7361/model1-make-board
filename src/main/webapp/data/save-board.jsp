@@ -1,16 +1,11 @@
-<%@ page import="java.sql.*" %>
-<%@ page import="com.study.board.*" %>
 <%@ page import="com.study.board.dto.BoardCreateDto" %>
 <%@ page import="com.oreilly.servlet.MultipartRequest" %>
 <%@ page import="com.study.filter.multitpart.MultipartHandler" %>
 <%@ page import="com.study.file.dao.FileDao" %>
 <%@ page import="com.study.file.dao.JdbcFileDao" %>
-<%@ page import="com.study.filter.PatternValidator" %>
 <%@ page import="com.study.filter.RequestHandler" %>
-<%@ page import="com.study.filter.PatternValidator" %>
 <%@ page import="com.study.board.dao.JdbcBoardDao" %>
 <%@ page import="com.study.board.dao.BoardDao" %>
-<%@ page import="com.study.util.UrlUtil" %>
 <%--
   Created by IntelliJ IDEA.
   User: woong

@@ -21,7 +21,6 @@ public class BoardCreateDto {
         this.content = content;
         this.fileList = fileList;
     }
-
     public Category getCategory() {
         return category;
     }
