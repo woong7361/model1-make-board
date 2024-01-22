@@ -35,8 +35,6 @@ public class RequestHandler {
     private static final String TITLE_PARAM = "title";
     private static final String CONTENT_PARAM = "content";
     private static final String BOARD_ID_PARAM = "board_id";
-//    private static final List<String> FILE_CREATE_PARAM_LIST = Arrays.asList("file_add1", "file_add2", "file_add3");
-//    private static final List<String> FILE_DELETE_PARAM_LIST = Arrays.asList("file_delete1", "file_delete2", "file_delete3");
 
 
     private final MultipartHandler multipartHandler = new MultipartHandler();
@@ -55,21 +53,6 @@ public class RequestHandler {
         return getIntParameterWithDefaultValue(request, PAGE_PARAM, FIRST_PAGE);
     }
 
-
-    public BoardCreateDto getBoardCreateDto(MultipartRequest multipartRequest) {
-        patternValidator.validateCreateBoardRequest(multipartRequest);
-
-        List<FileCreateDto> fileList = this.getFileCreateDtoList(multipartRequest);
-
-        return new BoardCreateDto(
-                Category.valueOf(multipartRequest.getParameter(CATEGORY_PARAM)),
-                multipartRequest.getParameter(NAME_PARAM),
-                multipartRequest.getParameter(PASSWORD_PARAM),
-                multipartRequest.getParameter(TITLE_PARAM),
-                multipartRequest.getParameter(CONTENT_PARAM),
-                fileList
-        );
-    }
 
     /**
      * get BoardCreateDto By Request
@@ -91,23 +74,6 @@ public class RequestHandler {
                 multipartRequest.getParameter(TITLE_PARAM),
                 multipartRequest.getParameter(CONTENT_PARAM),
                 fileList
-        );
-    }
-
-    public BoardModifyDto getBoardModifyDto(MultipartRequest multipartRequest) {
-        patternValidator.validateModifyBoardRequest(multipartRequest);
-
-        List<FileCreateDto> fileCreateList = this.getFileCreateDtoList(multipartRequest);
-        List<Integer> deleteFileIdList = getFileDeleteIdList(multipartRequest);
-
-        return new BoardModifyDto(
-                Integer.parseInt(multipartRequest.getParameter(BOARD_ID_PARAM)),
-                multipartRequest.getParameter(NAME_PARAM),
-                multipartRequest.getParameter(PASSWORD_PARAM),
-                multipartRequest.getParameter(TITLE_PARAM),
-                multipartRequest.getParameter(CONTENT_PARAM),
-                fileCreateList,
-                deleteFileIdList
         );
     }
 

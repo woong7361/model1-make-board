@@ -35,30 +35,6 @@ public class UrlUtil {
         return queryString;
     }
 
-    //매우 안어울림 위치 어디로 가야할까
-    public static List<String> getPageLinkTageList(HttpServletRequest request, int currentPage, int pageOffset, int totalCount) {
-        List<String> pageLinkList = new ArrayList<>();
-        pageLinkList.add("<font color=\"Fuchsia\">" + currentPage + "</font>&nbsp;\n");
-
-        int previousPage = currentPage - 1;
-        int nextPage = currentPage + 1;
-        String searchParam = getSearchParam(request);
-        String searchUrl = "/board/free/list.jsp" + searchParam;
-        while (pageLinkList.size() < 5) {
-            if (previousPage >= 0) {
-                pageLinkList.add(0, "<a href=\"" + searchUrl + "&page=" + previousPage + "\">"+ previousPage +"</a>&nbsp;");
-                previousPage--;
-            }
-            if (nextPage * pageOffset < totalCount) {
-                pageLinkList.add("<a href=\"" + searchUrl + "&page=" + nextPage + "\">" + nextPage + "</a>&nbsp;");
-                nextPage++;
-            }
-            if (previousPage < 0 && nextPage * pageOffset >= totalCount) break;
-        }
-
-        return pageLinkList;
-    }
-
 //    ------------------------------------------------------------------------------------------------------------------
 
     private static String getFirstQueryStringByParam(HttpServletRequest request, String param) {
