@@ -115,7 +115,7 @@
                 </tr>
             </table>
             <div id="buttons">
-                <input type="button" value="취소" onclick="location.href='/controller/board/list<%=searchParamWithBoardId%>'"/>
+                <input type="button" value="취소" onclick="location.href='/controller/board/view/list<%=searchParamWithBoardId%>'"/>
                 <input type="button" value="저장" onclick="send();"/>
             </div>
         </div>

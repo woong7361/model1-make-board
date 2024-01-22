@@ -21,7 +21,7 @@
     int previousPage = currentPage - 1;
     int nextPage = currentPage + 1;
     String searchParam = getSearchParam(request);
-    String searchUrl = "/controller/board/list" + searchParam;
+    String searchUrl = "/controller/board/view/list" + searchParam;
     while (pageLinkList.size() < 5) {
         if (previousPage >= 0) {
             pageLinkList.add(0, "<a href=\"" + searchUrl + "&page=" + previousPage + "\">"+ previousPage +"</a>&nbsp;");
@@ -43,7 +43,7 @@
         function search(){
             let search_form = document.search_form
 
-            search_form.action = "/controller/board/list";
+            search_form.action = "/controller/board/view/list";
             search_form.submit()
         }
     </script>
@@ -116,7 +116,7 @@
 
 
         <div id="create_board_link">
-            <button onclick="location.href='/board/free/write.jsp<%=searchParam%>';">등록</button>
+            <button onclick="location.href='/controller/board/view/write<%=searchParam%>';">등록</button>
         </div>
     </div>
 </div>

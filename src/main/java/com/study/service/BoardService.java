@@ -119,6 +119,12 @@ public class BoardService {
         forward(request, response, BOARD_UPDATE_VIEW_URI);
     }
 
+    /**
+     * update board
+     *
+     * @param request
+     * @param response
+     */
     public void updateBoard(HttpServletRequest request, HttpServletResponse response) {
         RequestHandler requestHandler = new RequestHandler();
         BoardModifyDto boardModifyDto = requestHandler.getBoardModifyDto(request);
@@ -138,6 +144,12 @@ public class BoardService {
         forward(request,response, BOARD_VIEW_CONTROLLER_URI);
     }
 
+    /**
+     * delete board
+     *
+     * @param request
+     * @param response
+     */
     public void deleteBoard(HttpServletRequest request, HttpServletResponse response) {
         int boardId = requestHandler.getBoardId(request);
 
@@ -155,6 +167,15 @@ public class BoardService {
         forward(request,response, BOARD_LIST_VIEW_CONTROLLER_URI);
     }
 
+    /**
+     * forward to board write
+     *
+     * @param request
+     * @param response
+     */
+    public void WriteView(HttpServletRequest request, HttpServletResponse response) {
+        forward(request, response, BOARD_WRITE_VIEW_URI);
+    }
 
 //    ------------------------------------------------------------------------------------------------------------------
 
@@ -174,4 +195,6 @@ public class BoardService {
             throw new WrapCheckedException("IOException", e);
         }
     }
+
+
 }

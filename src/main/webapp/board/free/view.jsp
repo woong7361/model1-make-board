@@ -30,7 +30,7 @@
 
             let create_form = document.create_form
             verify_pattern(create_form.content, content_pattern)
-            create_form.action = "/data/save-comment.jsp<%=searchParamWithBoardId%>";
+            create_form.action = "/controller/board/create<%=searchParamWithBoardId%>";
             create_form.submit()
         }
 
@@ -92,8 +92,8 @@
     </div>
 
     <div id="board_footer">
-        <button onclick="location.href='/controller/board/list<%=searchParamWithBoardId%>'">목록</button>
-        <button onclick="location.href='/controller/board/modify<%=searchParamWithBoardId%>'">수정</button>
+        <button onclick="location.href='/controller/board/view/list<%=searchParamWithBoardId%>'">목록</button>
+        <button onclick="location.href='/controller/board/view/update<%=searchParamWithBoardId%>'">수정</button>
         <button onclick="location.href='/controller/board/delete<%=searchParamWithBoardId%>'">삭제</button>
     </div>
 </div>

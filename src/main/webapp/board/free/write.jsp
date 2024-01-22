@@ -29,7 +29,6 @@
             verify_pattern(send_form.content, content_pattern);
             verify_password(send_form.password, send_form.password_confirm, password_pattern);
 
-            // send_form.action = "/data/save-board.jsp";
             send_form.action = "/controller/board/create";
             send_form.submit()
         }
@@ -95,7 +94,7 @@
         </div>
 
         <div id="buttons">
-            <input type="button" value="취소" onclick="location.href='/board/free/list.jsp<%=searchParam%>';"/>
+            <input type="button" value="취소" onclick="location.href='/controller/board/view/list<%=searchParam%>';"/>
             <input type="button" value="등록" onclick="send();"/>
         </div>
     </form>
