@@ -18,9 +18,9 @@ public interface FileDao {
 
     void deleteFileByListIdList(List<Integer> deleteFileIdList);
 
-    void deleteByBoardId(int boardId) throws SQLException;
+    void deleteByBoardId(int boardId);
 
-    List<String> getFilePathListByBoardId(int boardId) throws SQLException;
+    List<String> getFilePathListByBoardId(int boardId);
 
     List<String> getFilePathListByIdList(List<Integer> FileIdList);
 }

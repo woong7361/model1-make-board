@@ -19,5 +19,5 @@ public interface BoardDao {
 
     void updateBoard(BoardModifyDto boardModifyDto);
 
-    void deleteByBoardId(int boardId) throws SQLException;
+    void deleteByBoardId(int boardId);
 }

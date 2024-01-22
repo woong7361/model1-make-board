@@ -32,6 +32,7 @@ public class FrontControlServlet extends HttpServlet {
         controllerMap.put(BOARD_LIST_VIEW_CONTROLLER_URI, new BoardListViewController());
         controllerMap.put(BOARD_MODIFY_CONTROLLER_URI, new BoardMordifyController());
         controllerMap.put(BOARD_UPDATE_CONTROLLER_URI, new BoardUpdateController());
+        controllerMap.put(BOARD_DELETE_CONTROLLER_URI, new BoardDeleteController());
 
         super.init();
     }

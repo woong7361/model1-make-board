@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.study.config.ConfigConst.PAGE_OFFSET;
+import static com.study.constant.ControllerUriConstant.BOARD_LIST_VIEW_CONTROLLER_URI;
 import static com.study.constant.ControllerUriConstant.BOARD_VIEW_CONTROLLER_URI;
 import static com.study.constant.ViewUriConstant.*;
 
@@ -135,6 +136,23 @@ public class BoardService {
         }
 
         forward(request,response, BOARD_VIEW_CONTROLLER_URI);
+    }
+
+    public void deleteBoard(HttpServletRequest request, HttpServletResponse response) {
+        int boardId = requestHandler.getBoardId(request);
+
+        fileDao.deleteByBoardId(boardId);
+        commentDao.deleteByBoardId(boardId);
+
+        List<String> filePathList = fileDao.getFilePathListByBoardId(boardId);
+        for (String path : filePathList) {
+            File file = new File(path);
+            file.delete();
+        }
+
+        boardDao.deleteByBoardId(boardId);
+
+        forward(request,response, BOARD_LIST_VIEW_CONTROLLER_URI);
     }
 
 

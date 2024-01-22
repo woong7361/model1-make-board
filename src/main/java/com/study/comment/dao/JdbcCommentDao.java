@@ -56,16 +56,19 @@ public class JdbcCommentDao implements CommentDao{
     }
 
 
-    public void deleteByBoardId(int boardId) throws SQLException {
-        Connection connection = ConnectionPool.getConnection();
+    public void deleteByBoardId(int boardId) {
         String deleteSql = "DELETE FROM comment WHERE board_id = ?";
 
-        PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
-        preparedStatement.setInt(1, boardId);
-        preparedStatement.executeUpdate();
+        try(
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
 
-        preparedStatement.close();
-        connection.close();
+                ){
+            preparedStatement.setInt(1, boardId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new WrapCheckedException("sql Exception", e);
+        }
     }
 
 }

@@ -110,37 +110,42 @@ public class JdbcFileDao implements FileDao{
     }
 
     @Override
-    public void deleteByBoardId(int boardId) throws SQLException {
-        Connection connection = ConnectionPool.getConnection();
+    public void deleteByBoardId(int boardId) {
         String deleteSql = "DELETE FROM file WHERE board_id = ?";
 
-        PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
-        preparedStatement.setInt(1, boardId);
-        preparedStatement.executeUpdate();
-
-        preparedStatement.close();
-        connection.close();
+        try(
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
+                ){
+            preparedStatement.setInt(1, boardId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new WrapCheckedException("sql Exception", e);
+        }
     }
 
     @Override
-    public List<String> getFilePathListByBoardId(int boardId) throws SQLException {
-        Connection connection = ConnectionPool.getConnection();
+    public List<String> getFilePathListByBoardId(int boardId) {
         String deleteSql = "SELECT path FROM file WHERE board_id = ?";
 
-        PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
-        preparedStatement.setInt(1, boardId);
-        ResultSet resultSet = preparedStatement.executeQuery();
+        try(
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
+                ) {
+            preparedStatement.setInt(1, boardId);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-        List<String> filePathList = new ArrayList<>();
-        while (resultSet.next()) {
-            filePathList.add(resultSet.getString("path"));
+            List<String> filePathList = new ArrayList<>();
+            while (resultSet.next()) {
+                filePathList.add(resultSet.getString("path"));
+            }
+
+            resultSet.close();
+
+            return filePathList;
+        } catch (SQLException e) {
+            throw new WrapCheckedException("sql Exception", e);
         }
-
-        resultSet.close();
-        preparedStatement.close();
-        connection.close();
-
-        return filePathList;
     }
 
     @Override

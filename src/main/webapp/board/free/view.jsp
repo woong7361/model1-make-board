@@ -94,7 +94,7 @@
     <div id="board_footer">
         <button onclick="location.href='/controller/board/list<%=searchParamWithBoardId%>'">목록</button>
         <button onclick="location.href='/controller/board/modify<%=searchParamWithBoardId%>'">수정</button>
-        <button onclick="location.href='/data/delete-board.jsp<%=searchParamWithBoardId%>'">삭제</button>
+        <button onclick="location.href='/controller/board/delete<%=searchParamWithBoardId%>'">삭제</button>
     </div>
 </div>
 </body>
