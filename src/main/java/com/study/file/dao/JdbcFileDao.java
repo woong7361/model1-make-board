@@ -1,6 +1,7 @@
 package com.study.file.dao;
 
 import com.study.connection.ConnectionPool;
+import com.study.exception.WrapCheckedException;
 import com.study.file.dto.FileCreateDto;
 import com.study.file.dto.FileDownloadDto;
 import com.study.file.dto.FileDto;
@@ -16,25 +17,46 @@ import java.util.Optional;
 public class JdbcFileDao implements FileDao{
 
     @Override
-    public void saveFileListIdList(List<FileCreateDto> fileList, int boardId) throws SQLException {
-        Connection connection = ConnectionPool.getConnection();
+    public void saveFileListIdList(List<FileCreateDto> fileList, int boardId) {
         String createFileSql = "INSERT INTO file (" +
                 "original_name, name, path, extension, board_id) " +
                 "VALUES (?, ?, ?, ?, ?)";
 
-        for (FileCreateDto fileCreateDto : fileList) {
-            PreparedStatement preparedStatement = connection.prepareStatement(createFileSql);
-            preparedStatement.setString(1, fileCreateDto.getOriginalFileName());
-            preparedStatement.setString(2, fileCreateDto.getFileName());
-            preparedStatement.setString(3, fileCreateDto.getFilePath());
-            preparedStatement.setString(4, fileCreateDto.getExtension());
-            preparedStatement.setInt(5, boardId);
+        try (
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(createFileSql);
 
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
+        ) {
+            for (FileCreateDto fileCreateDto : fileList) {
+//            PreparedStatement preparedStatement = connection.prepareStatement(createFileSql);
+                preparedStatement.setString(1, fileCreateDto.getOriginalFileName());
+                preparedStatement.setString(2, fileCreateDto.getFileName());
+                preparedStatement.setString(3, fileCreateDto.getFilePath());
+                preparedStatement.setString(4, fileCreateDto.getExtension());
+                preparedStatement.setInt(5, boardId);
+
+                preparedStatement.executeUpdate();
+//                preparedStatement.close();
+            }
+        } catch (SQLException e) {
+            throw new WrapCheckedException("sql exception", e);
         }
-        connection.close();
 
+//        Connection connection = ConnectionPool.getConnection();
+//
+//        for (FileCreateDto fileCreateDto : fileList) {
+////            PreparedStatement preparedStatement = connection.prepareStatement(createFileSql);
+//            preparedStatement.setString(1, fileCreateDto.getOriginalFileName());
+//            preparedStatement.setString(2, fileCreateDto.getFileName());
+//            preparedStatement.setString(3, fileCreateDto.getFilePath());
+//            preparedStatement.setString(4, fileCreateDto.getExtension());
+//            preparedStatement.setInt(5, boardId);
+//
+//            preparedStatement.executeUpdate();
+//            preparedStatement.close();
+//        }
+//        connection.close();
+//
     }
 
     @Override

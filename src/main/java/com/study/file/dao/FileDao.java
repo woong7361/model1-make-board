@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface FileDao {
 
-    void saveFileListIdList(List<FileCreateDto> fileList, int boardId) throws SQLException;
+    void saveFileListIdList(List<FileCreateDto> fileList, int boardId);
 
     List<FileDto> getFileByBoardId(int boardId) throws SQLException;
 

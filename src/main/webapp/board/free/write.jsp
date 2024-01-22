@@ -30,7 +30,7 @@
             verify_password(send_form.password, send_form.password_confirm, password_pattern);
 
             // send_form.action = "/data/save-board.jsp";
-            send_form.action = "/controller/test";
+            send_form.action = "/controller/board/create";
             send_form.submit()
         }
 

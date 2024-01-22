@@ -6,6 +6,7 @@ import com.study.board.dto.*;
 import com.study.connection.ConnectionPool;
 import com.study.encryption.CipherEncrypt;
 import com.study.encryption.EncryptManager;
+import com.study.exception.WrapCheckedException;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -17,36 +18,66 @@ public class JdbcBoardDao implements BoardDao{
     public static final String FIND_ALL = "ALL";
 
     @Override
-    public int saveBoard(BoardCreateDto boardCreateDto) throws SQLException{
-        Connection connection = ConnectionPool.getConnection();
+    public int saveBoard(BoardCreateDto boardCreateDto) {
+
         String createBoardSql = "INSERT INTO board (" +
                 "category_id, name, password, title, " +
                 "content, view, created_at, modified_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        EncryptManager encryptManger = new CipherEncrypt();
-        String password = encryptManger.encrypt(boardCreateDto.getPassword());
+        try (
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(createBoardSql, Statement.RETURN_GENERATED_KEYS);
 
-        PreparedStatement preparedStatement = connection.prepareStatement(createBoardSql, Statement.RETURN_GENERATED_KEYS);
-        preparedStatement.setInt(1, boardCreateDto.getCategory().getCategoryId());
-        preparedStatement.setString(2, boardCreateDto.getName());
-        preparedStatement.setString(3, password);
-        preparedStatement.setString(4, boardCreateDto.getTitle());
-        preparedStatement.setString(5, boardCreateDto.getContent());
-        preparedStatement.setInt(6, 0);
-        preparedStatement.setTimestamp(7, Timestamp.valueOf(LocalDateTime.now()));
-        preparedStatement.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
-        preparedStatement.executeUpdate();
+        ) {
+            EncryptManager encryptManger = new CipherEncrypt();
+            String password = encryptManger.encrypt(boardCreateDto.getPassword());
 
-        int boardId = 0;
-        ResultSet rs = preparedStatement.getGeneratedKeys(); // 쿼리 실행 후 생성된 키 값 반환
-        if (rs.next()) {
-            boardId = rs.getInt(1); // 키값 초기화
+            preparedStatement.setInt(1, boardCreateDto.getCategory().getCategoryId());
+            preparedStatement.setString(2, boardCreateDto.getName());
+            preparedStatement.setString(3, password);
+            preparedStatement.setString(4, boardCreateDto.getTitle());
+            preparedStatement.setString(5, boardCreateDto.getContent());
+            preparedStatement.setInt(6, 0);
+            preparedStatement.setTimestamp(7, Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatement.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatement.executeUpdate();
+
+            int boardId = 0;
+            ResultSet rs = preparedStatement.getGeneratedKeys(); // 쿼리 실행 후 생성된 키 값 반환
+            if (rs.next()) {
+                boardId = rs.getInt(1); // 키값 초기화
+            }
+
+            return boardId;
+        } catch (SQLException e) {
+            throw new WrapCheckedException("sql Exception", e);
         }
+//        Connection connection = ConnectionPool.getConnection();
+//        PreparedStatement preparedStatement = connection.prepareStatement(createBoardSql, Statement.RETURN_GENERATED_KEYS);
 
-        preparedStatement.close();
-        connection.close();
-        return boardId;
+//        EncryptManager encryptManger = new CipherEncrypt();
+//        String password = encryptManger.encrypt(boardCreateDto.getPassword());
+//
+//        preparedStatement.setInt(1, boardCreateDto.getCategory().getCategoryId());
+//        preparedStatement.setString(2, boardCreateDto.getName());
+//        preparedStatement.setString(3, password);
+//        preparedStatement.setString(4, boardCreateDto.getTitle());
+//        preparedStatement.setString(5, boardCreateDto.getContent());
+//        preparedStatement.setInt(6, 0);
+//        preparedStatement.setTimestamp(7, Timestamp.valueOf(LocalDateTime.now()));
+//        preparedStatement.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
+//        preparedStatement.executeUpdate();
+//
+//        int boardId = 0;
+//        ResultSet rs = preparedStatement.getGeneratedKeys(); // 쿼리 실행 후 생성된 키 값 반환
+//        if (rs.next()) {
+//            boardId = rs.getInt(1); // 키값 초기화
+//        }
+//
+//        preparedStatement.close();
+//        connection.close();
+//        return boardId;
     }
 
     @Override
@@ -156,38 +187,64 @@ public class JdbcBoardDao implements BoardDao{
     }
 
     @Override
-    public Optional<BoardDto> getBoardByBoardId(int boardId) throws SQLException{
-        Connection connection = ConnectionPool.getConnection();
+    public Optional<BoardDto> getBoardByBoardId(int boardId){
+
         String getBoardSql =
                 "SELECT b.*, (SELECT category FROM category AS c WHERE b.category_id = c.category_id) AS category " +
                 "FROM board AS b " +
                 "WHERE (b.board_id = ?)" ;
 
+        try (
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(getBoardSql);
+        ) {
+            preparedStatement.setInt(1, boardId);
 
-        PreparedStatement preparedStatement = connection.prepareStatement(getBoardSql);
-        preparedStatement.setInt(1, boardId);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-        ResultSet resultSet = preparedStatement.executeQuery();
+            Optional<BoardDto> boardDto = Optional.empty();
+            if (resultSet.next()) {
+                boardDto = Optional.of(new BoardDto(
+                        resultSet.getInt("b.board_id"),
+                        Category.valueOf(resultSet.getString("category")),
+                        resultSet.getString("b.title"),
+                        resultSet.getString("b.name"),
+                        resultSet.getString("b.content"),
+                        resultSet.getInt("b.view"),
+                        resultSet.getTimestamp("b.created_at").toLocalDateTime(),
+                        resultSet.getTimestamp("b.modified_at").toLocalDateTime()
+                ));
+            }
+            return boardDto;
 
-        Optional<BoardDto> boardDto = Optional.empty();
-        if (resultSet.next()) {
-            boardDto = Optional.of(new BoardDto(
-                    resultSet.getInt("b.board_id"),
-                    Category.valueOf(resultSet.getString("category")),
-                    resultSet.getString("b.title"),
-                    resultSet.getString("b.name"),
-                    resultSet.getString("b.content"),
-                    resultSet.getInt("b.view"),
-                    resultSet.getTimestamp("b.created_at").toLocalDateTime(),
-                    resultSet.getTimestamp("b.modified_at").toLocalDateTime()
-            ));
+        } catch (SQLException sqlException) {
+            throw new WrapCheckedException("sql exception", sqlException);
         }
+//        Connection connection = ConnectionPool.getConnection();
+//        PreparedStatement preparedStatement = connection.prepareStatement(getBoardSql);
+//        preparedStatement.setInt(1, boardId);
+//
+//        ResultSet resultSet = preparedStatement.executeQuery();
+//
+//        Optional<BoardDto> boardDto = Optional.empty();
+//        if (resultSet.next()) {
+//            boardDto = Optional.of(new BoardDto(
+//                    resultSet.getInt("b.board_id"),
+//                    Category.valueOf(resultSet.getString("category")),
+//                    resultSet.getString("b.title"),
+//                    resultSet.getString("b.name"),
+//                    resultSet.getString("b.content"),
+//                    resultSet.getInt("b.view"),
+//                    resultSet.getTimestamp("b.created_at").toLocalDateTime(),
+//                    resultSet.getTimestamp("b.modified_at").toLocalDateTime()
+//            ));
+//        }
+//
+//        resultSet.close();
+//        preparedStatement.close();
+//        connection.close();
 
-        resultSet.close();
-        preparedStatement.close();
-        connection.close();
-
-        return boardDto;
+//        return boardDto;
     }
 
     @Override

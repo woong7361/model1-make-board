@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BoardDao {
-    int saveBoard(BoardCreateDto boardCreateDto) throws SQLException;
+    int saveBoard(BoardCreateDto boardCreateDto);
 
     int getCountBySearchParam(BoardSearchDto boardSearchDto) throws SQLException;
 
     List<BoardListDto> getBoardListBySearchParam(BoardSearchDto boardSearchDto, Integer currentPage, int pageOffset) throws SQLException;
 
-    Optional<BoardDto> getBoardByBoardId(int boardId) throws SQLException;
+    Optional<BoardDto> getBoardByBoardId(int boardId);
 
     void addBoardViewByBoardId(int boardId) throws SQLException;
 

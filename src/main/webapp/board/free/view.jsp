@@ -33,6 +33,8 @@
             .getBoardByBoardId(boardId)
             .orElseThrow(() -> new IllegalArgumentException());
 
+//    BoardDto boardDto = (BoardDto) request.getAttribute("boardDto");
+
     FileDao fileDao = new JdbcFileDao();
     List<FileDto> fileDtoList = fileDao.getFileByBoardId(boardId);
 

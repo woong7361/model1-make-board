@@ -1,6 +1,7 @@
 package com.study.controller;
 
 import com.study.exception.CustomException;
+import com.study.exception.WrapCheckedException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -50,14 +51,15 @@ public class FrontControlServlet extends HttpServlet {
         //TODO error catch Servelt 새로 만들기
         try {
             controller.service(request, response);
-        } catch (CustomException e) {
+        } catch (WrapCheckedException e) {
             e.printStackTrace();
+            System.out.println("e.getMessage() = " + e.getMessage());
 
             // TODO ERROR log 출력
 
             response.sendRedirect("/error/error.jsp");
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (CustomException e) {
+            System.out.println("e.getMessage() = " + e.getMessage());
 
             // TODO ERROR log 출력
 
