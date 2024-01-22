@@ -2,10 +2,7 @@ package com.study.service;
 
 import com.study.board.dao.BoardDao;
 import com.study.board.dao.BoardDaoFactory;
-import com.study.board.dto.BoardCreateDto;
-import com.study.board.dto.BoardDto;
-import com.study.board.dto.BoardListDto;
-import com.study.board.dto.BoardSearchDto;
+import com.study.board.dto.*;
 import com.study.comment.dao.CommentDao;
 import com.study.comment.dao.CommentDaoFactory;
 import com.study.comment.dto.CommentDto;
@@ -19,6 +16,7 @@ import com.study.filter.RequestHandler;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -120,6 +118,25 @@ public class BoardService {
         forward(request, response, BOARD_UPDATE_VIEW_URI);
     }
 
+    public void updateBoard(HttpServletRequest request, HttpServletResponse response) {
+        RequestHandler requestHandler = new RequestHandler();
+        BoardModifyDto boardModifyDto = requestHandler.getBoardModifyDto(request);
+
+        boardDao.updateBoard(boardModifyDto);
+
+        List<String> filePathList = fileDao.getFilePathListByIdList(boardModifyDto.getDeleteFileIdList());
+        fileDao.deleteFileByListIdList(boardModifyDto.getDeleteFileIdList());
+        fileDao.saveFileListIdList(boardModifyDto.getCreateFileList(), boardModifyDto.getBoard_id());
+
+        //TODO filehandler로 추출
+        for (String path : filePathList) {
+            File file = new File(path);
+            file.delete();
+        }
+
+        forward(request,response, BOARD_VIEW_CONTROLLER_URI);
+    }
+
 
 //    ------------------------------------------------------------------------------------------------------------------
 
@@ -139,5 +156,4 @@ public class BoardService {
             throw new WrapCheckedException("IOException", e);
         }
     }
-
 }

@@ -16,11 +16,11 @@ public interface FileDao {
 
     Optional<FileDownloadDto> getFileByFileId(int fileId) throws SQLException;
 
-    void deleteFileByListIdList(List<Integer> deleteFileIdList) throws SQLException;
+    void deleteFileByListIdList(List<Integer> deleteFileIdList);
 
     void deleteByBoardId(int boardId) throws SQLException;
 
     List<String> getFilePathListByBoardId(int boardId) throws SQLException;
 
-    List<String> getFilePathListByIdList(List<Integer> FileIdList) throws SQLException;
+    List<String> getFilePathListByIdList(List<Integer> FileIdList);
 }

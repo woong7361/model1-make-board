@@ -38,7 +38,7 @@
             verify_pattern(send_form.content, content_pattern);
             verify_pattern(send_form.password, password_pattern);
 
-            send_form.action = "/data/edit-board.jsp<%=searchParamWithBoardId%>";
+            send_form.action = "/controller/board/update<%=searchParamWithBoardId%>";
             send_form.submit()
         }
 
@@ -115,7 +115,7 @@
                 </tr>
             </table>
             <div id="buttons">
-                <input type="button" value="취소" onclick="location.href='/board/free/view.jsp<%=searchParamWithBoardId%>'"/>
+                <input type="button" value="취소" onclick="location.href='/controller/board/list<%=searchParamWithBoardId%>'"/>
                 <input type="button" value="저장" onclick="send();"/>
             </div>
         </div>

@@ -92,19 +92,21 @@ public class JdbcFileDao implements FileDao{
     }
 
     @Override
-    public void deleteFileByListIdList(List<Integer> deleteFileIdList) throws SQLException {
-        Connection connection = ConnectionPool.getConnection();
+    public void deleteFileByListIdList(List<Integer> deleteFileIdList) {
+        String deleteFileSql = "DELETE FROM file WHERE (file_id = ?)";
 
-        for (Integer fileId : deleteFileIdList) {
-            String deleteFileSql = "DELETE FROM file WHERE (file_id = ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(deleteFileSql);
-            preparedStatement.setInt(1, fileId);
+        try (
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(deleteFileSql);
+                ) {
+            for (Integer fileId : deleteFileIdList) {
+                preparedStatement.setInt(1, fileId);
 
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new WrapCheckedException("sql Exception", e);
         }
-
-        connection.close();
     }
 
     @Override
@@ -142,26 +144,28 @@ public class JdbcFileDao implements FileDao{
     }
 
     @Override
-    public List<String> getFilePathListByIdList(List<Integer> FileIdList) throws SQLException {
-        Connection connection = ConnectionPool.getConnection();
+    public List<String> getFilePathListByIdList(List<Integer> FileIdList) {
+        String deleteFileSql = "SELECT path FROM file WHERE (file_id = ?)";
 
-        List<String> filePathList = new ArrayList<>();
-        for (Integer fileId : FileIdList) {
-            String deleteFileSql = "SELECT path FROM file WHERE (file_id = ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(deleteFileSql);
-            preparedStatement.setInt(1, fileId);
+        try (
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(deleteFileSql);
+                ) {
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                filePathList.add(resultSet.getString("path"));
+            List<String> filePathList = new ArrayList<>();
+            for (Integer fileId : FileIdList) {
+                preparedStatement.setInt(1, fileId);
+
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    filePathList.add(resultSet.getString("path"));
+                }
             }
 
-            resultSet.close();
-            preparedStatement.close();
+            return filePathList;
+        } catch (SQLException e) {
+            throw new WrapCheckedException("sql Exception", e);
         }
 
-        connection.close();
-
-        return filePathList;
     }
 }

@@ -111,6 +111,25 @@ public class RequestHandler {
         );
     }
 
+    public BoardModifyDto getBoardModifyDto(HttpServletRequest request) {
+        MultipartRequest multipartRequest = multipartHandler.getMultipartRequest(request);
+
+        patternValidator.validateModifyBoardRequest(multipartRequest);
+
+        List<FileCreateDto> fileCreateList = this.getFileCreateDtoList(multipartRequest);
+        List<Integer> deleteFileIdList = getFileDeleteIdList(multipartRequest);
+
+        return new BoardModifyDto(
+                Integer.parseInt(multipartRequest.getParameter(BOARD_ID_PARAM)),
+                multipartRequest.getParameter(NAME_PARAM),
+                multipartRequest.getParameter(PASSWORD_PARAM),
+                multipartRequest.getParameter(TITLE_PARAM),
+                multipartRequest.getParameter(CONTENT_PARAM),
+                fileCreateList,
+                deleteFileIdList
+        );
+    }
+
 
     public CommentCreateDto getCommentCreateDto(HttpServletRequest request) {
         patternValidator.validateCreateComment(request);

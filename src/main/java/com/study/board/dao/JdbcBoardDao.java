@@ -239,10 +239,9 @@ public class JdbcBoardDao implements BoardDao{
     }
 
     @Override
-    public void updateBoard(BoardModifyDto boardModifyDto) throws SQLException {
-        Connection connection = ConnectionPool.getConnection();
-
-        String updateBoardSql = "UPDATE board " +
+    public void updateBoard(BoardModifyDto boardModifyDto) {
+        String updateBoardSql =
+                "UPDATE board " +
                 "SET name = ?, " +
                 "password = ?, " +
                 "title = ?, " +
@@ -250,17 +249,20 @@ public class JdbcBoardDao implements BoardDao{
                 "modified_at = ? " +
                 "WHERE board_id = ?";
 
-        PreparedStatement preparedStatement = connection.prepareStatement(updateBoardSql);
-        preparedStatement.setString(1, boardModifyDto.getName());
-        preparedStatement.setString(2, boardModifyDto.getPassword());
-        preparedStatement.setString(3, boardModifyDto.getTitle());
-        preparedStatement.setString(4, boardModifyDto.getContent());
-        preparedStatement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
-        preparedStatement.setInt(6, boardModifyDto.getBoard_id());
-        preparedStatement.executeUpdate();
-
-        preparedStatement.close();
-        connection.close();
+        try (
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateBoardSql);
+                ) {
+            preparedStatement.setString(1, boardModifyDto.getName());
+            preparedStatement.setString(2, boardModifyDto.getPassword());
+            preparedStatement.setString(3, boardModifyDto.getTitle());
+            preparedStatement.setString(4, boardModifyDto.getContent());
+            preparedStatement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatement.setInt(6, boardModifyDto.getBoard_id());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new WrapCheckedException("sql Exception", e);
+        }
     }
 
     @Override
