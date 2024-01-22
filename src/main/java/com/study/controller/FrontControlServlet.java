@@ -30,6 +30,7 @@ public class FrontControlServlet extends HttpServlet {
     public void init() throws ServletException {
         controllerMap.put(BOARD_WRITE_CONTROLLER_URI, new WriteController());
         controllerMap.put(BOARD_VIEW_CONTROLLER_URI, new BoardViewController());
+        controllerMap.put(BOARD_LIST_VIEW_CONTROLLER_URI, new BoardListViewController());
 
         super.init();
     }
@@ -43,13 +44,14 @@ public class FrontControlServlet extends HttpServlet {
      * @throws IOException
      */
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String requestURI = request.getRequestURI();
         Controller controller = controllerMap.get(requestURI);
 
-        //TODO error catch Servelt 새로 만들기
+        //TODO error catch Servlet 새로 만들기
         try {
+            request.setCharacterEncoding("UTF-8");
+
             controller.service(request, response);
         } catch (WrapCheckedException e) {
             e.printStackTrace();

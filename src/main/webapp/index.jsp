@@ -9,7 +9,7 @@
 <h1><%= "Hello World!" %>
 </h1>
 <br/>
-<a href="/board/free/list.jsp">go list page</a>
+<a href="/controller/board/list">go list page</a>
 <a href="/board/free/write.jsp">go create page</a>
 
 </body>

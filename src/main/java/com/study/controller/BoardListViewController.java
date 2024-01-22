@@ -5,13 +5,10 @@ import com.study.service.BoardService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * board를 작성하는 controller
- */
-public class WriteController implements Controller {
+public class BoardListViewController implements Controller{
     @Override
     public void service(HttpServletRequest request, HttpServletResponse response) {
         BoardService boardService = new BoardService();
-        boardService.write(request, response);
+        boardService.listView(request, response);
     }
 }

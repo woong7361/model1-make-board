@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 public class BoardViewController implements Controller{
     @Override
-    public void service(HttpServletRequest request, HttpServletResponse response)  throws IOException {
+    public void service(HttpServletRequest request, HttpServletResponse response) {
         BoardService boardService = new BoardService();
         boardService.view(request, response);
     }

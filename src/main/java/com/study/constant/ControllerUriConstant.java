@@ -7,4 +7,5 @@ package com.study.constant;
 public class ControllerUriConstant {
     public static final String BOARD_WRITE_CONTROLLER_URI = "/controller/board/create";
     public static final String BOARD_VIEW_CONTROLLER_URI = "/controller/board/view";
+    public static final String BOARD_LIST_VIEW_CONTROLLER_URI = "/controller/board/list";
 }

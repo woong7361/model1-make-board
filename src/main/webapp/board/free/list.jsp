@@ -1,10 +1,8 @@
-<%@ page import="com.study.board.dao.JdbcBoardDao" %>
-<%@ page import="com.study.board.dao.BoardDao" %>
 <%@ page import="com.study.board.dto.BoardListDto" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.study.util.UrlUtil" %>
-<%@ page import="com.study.filter.RequestHandler" %>
-<%@ page import="com.study.board.dto.BoardSearchDto" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="static com.study.util.UrlUtil.getSearchParam" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%!
@@ -13,17 +11,32 @@
 <%
     request.setCharacterEncoding("UTF-8");
 
-    RequestHandler requestHandler = new RequestHandler();
-    BoardSearchDto boardSearchDto = requestHandler.getBoardSearchDto(request);
-    int currentPage = requestHandler.getCurrentPage(request);
+    int currentPage = (int) request.getAttribute("currentPage");
+    int totalCount = (int) request.getAttribute("totalCount");
+    List<BoardListDto> boardList = (List<BoardListDto>) request.getAttribute("boardList");
 
-    BoardDao boardDao = new JdbcBoardDao();
-    int totalCount = boardDao.getCountBySearchParam(boardSearchDto);
-    List<BoardListDto> boardList = boardDao.getBoardListBySearchParam(boardSearchDto, currentPage, PAGE_OFFSET);
 
-    List<String> pageLinkList = UrlUtil.getPageLinkTageList(request, currentPage, PAGE_OFFSET, totalCount);
 
-    String searchParam = UrlUtil.getSearchParam(request);
+    //TODO view logic으로 따로 빼기
+    List<String> pageLinkList = new ArrayList<>();
+    pageLinkList.add("<font color=\"Fuchsia\">" + currentPage + "</font>&nbsp;\n");
+
+    int previousPage = currentPage - 1;
+    int nextPage = currentPage + 1;
+    String searchParam = getSearchParam(request);
+    String searchUrl = "/controller/board/list" + searchParam;
+    while (pageLinkList.size() < 5) {
+        if (previousPage >= 0) {
+            pageLinkList.add(0, "<a href=\"" + searchUrl + "&page=" + previousPage + "\">"+ previousPage +"</a>&nbsp;");
+            previousPage--;
+        }
+        if (nextPage * PAGE_OFFSET < totalCount) {
+            pageLinkList.add("<a href=\"" + searchUrl + "&page=" + nextPage + "\">" + nextPage + "</a>&nbsp;");
+            nextPage++;
+        }
+        if (previousPage < 0 && nextPage * PAGE_OFFSET >= totalCount) break;
+    }
+
 %>
 <html>
 <head>
@@ -33,7 +46,7 @@
         function search(){
             let search_form = document.search_form
 
-            search_form.action = "/board/free/list.jsp";
+            search_form.action = "/controller/board/list";
             search_form.submit()
         }
     </script>

@@ -4,6 +4,8 @@ import com.study.board.dao.BoardDao;
 import com.study.board.dao.BoardDaoFactory;
 import com.study.board.dto.BoardCreateDto;
 import com.study.board.dto.BoardDto;
+import com.study.board.dto.BoardListDto;
+import com.study.board.dto.BoardSearchDto;
 import com.study.comment.dao.CommentDao;
 import com.study.comment.dao.CommentDaoFactory;
 import com.study.comment.dto.CommentDto;
@@ -18,10 +20,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
+import static com.study.config.ConfigConst.PAGE_OFFSET;
 import static com.study.constant.ControllerUriConstant.BOARD_VIEW_CONTROLLER_URI;
+import static com.study.constant.ViewUriConstant.BOARD_LIST_VIEW_URI;
 import static com.study.constant.ViewUriConstant.BOARD_VIEW_URI;
 
 /**
@@ -56,7 +59,7 @@ public class BoardService {
     }
 
     /**
-     * get BoardDto, CommentDto, FileDto for view
+     * set Attribute for view and add view count
      *
      * @param request
      * @param response
@@ -76,6 +79,26 @@ public class BoardService {
 
         forward(request, response, BOARD_VIEW_URI);
 
+    }
+
+    /**
+     * set Attribute for list view
+     *
+     * @param request
+     * @param response
+     */
+    public void listView(HttpServletRequest request, HttpServletResponse response) {
+        BoardSearchDto boardSearchDto = requestHandler.getBoardSearchDto(request);
+        int currentPage = requestHandler.getCurrentPage(request);
+
+        int totalCount = boardDao.getCountBySearchParam(boardSearchDto);
+        List<BoardListDto> boardList = boardDao.getBoardListBySearchParam(boardSearchDto, currentPage, PAGE_OFFSET);
+
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("totalCount", totalCount);
+        request.setAttribute("boardList", boardList);
+
+        forward(request, response, BOARD_LIST_VIEW_URI);
     }
 
 

@@ -9,9 +9,9 @@ import java.util.Optional;
 public interface BoardDao {
     int saveBoard(BoardCreateDto boardCreateDto);
 
-    int getCountBySearchParam(BoardSearchDto boardSearchDto) throws SQLException;
+    int getCountBySearchParam(BoardSearchDto boardSearchDto);
 
-    List<BoardListDto> getBoardListBySearchParam(BoardSearchDto boardSearchDto, Integer currentPage, int pageOffset) throws SQLException;
+    List<BoardListDto> getBoardListBySearchParam(BoardSearchDto boardSearchDto, Integer currentPage, int pageOffset);
 
     Optional<BoardDto> getBoardByBoardId(int boardId);
 

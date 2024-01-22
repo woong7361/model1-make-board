@@ -53,36 +53,10 @@ public class JdbcBoardDao implements BoardDao{
         } catch (SQLException e) {
             throw new WrapCheckedException("sql Exception", e);
         }
-//        Connection connection = ConnectionPool.getConnection();
-//        PreparedStatement preparedStatement = connection.prepareStatement(createBoardSql, Statement.RETURN_GENERATED_KEYS);
-
-//        EncryptManager encryptManger = new CipherEncrypt();
-//        String password = encryptManger.encrypt(boardCreateDto.getPassword());
-//
-//        preparedStatement.setInt(1, boardCreateDto.getCategory().getCategoryId());
-//        preparedStatement.setString(2, boardCreateDto.getName());
-//        preparedStatement.setString(3, password);
-//        preparedStatement.setString(4, boardCreateDto.getTitle());
-//        preparedStatement.setString(5, boardCreateDto.getContent());
-//        preparedStatement.setInt(6, 0);
-//        preparedStatement.setTimestamp(7, Timestamp.valueOf(LocalDateTime.now()));
-//        preparedStatement.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
-//        preparedStatement.executeUpdate();
-//
-//        int boardId = 0;
-//        ResultSet rs = preparedStatement.getGeneratedKeys(); // 쿼리 실행 후 생성된 키 값 반환
-//        if (rs.next()) {
-//            boardId = rs.getInt(1); // 키값 초기화
-//        }
-//
-//        preparedStatement.close();
-//        connection.close();
-//        return boardId;
     }
 
     @Override
-    public int getCountBySearchParam(BoardSearchDto boardSearchDto) throws SQLException{
-        Connection connection = ConnectionPool.getConnection();
+    public int getCountBySearchParam(BoardSearchDto boardSearchDto){
         String getCountSql = "SELECT COUNT(*) FROM board WHERE (created_at BETWEEN ? AND ?)" ;
 
         String categorySearchSql = "";
@@ -95,39 +69,38 @@ public class JdbcBoardDao implements BoardDao{
         }
         getCountSql = getCountSql + categorySearchSql + searchKeySql;
 
+        try (
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(getCountSql);
+        ) {
+            int index = 1;
+            preparedStatement.setTimestamp(index++, Timestamp.valueOf(boardSearchDto.getSearchStartDate()));
+            preparedStatement.setTimestamp(index++, Timestamp.valueOf(boardSearchDto.getSearchEndDate()));
 
-        int index = 1;
-        PreparedStatement preparedStatement = connection.prepareStatement(getCountSql);
-        preparedStatement.setTimestamp(index++, Timestamp.valueOf(boardSearchDto.getSearchStartDate()));
-        preparedStatement.setTimestamp(index++, Timestamp.valueOf(boardSearchDto.getSearchEndDate()));
+            if (!boardSearchDto.getSearchCategory().equals(Category.ALL)) {
+                preparedStatement.setInt(index++, boardSearchDto.getSearchCategory().getCategoryId());
+            }
+            if (!boardSearchDto.getSearchKey().equals(FIND_ALL)){
+                String searchKey = boardSearchDto.getSearchKey();
+                preparedStatement.setString(index++, "%"+searchKey+"%");
+                preparedStatement.setString(index++, "%"+searchKey+"%");
+                preparedStatement.setString(index++, "%"+searchKey+"%");
+            }
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-        if (!boardSearchDto.getSearchCategory().equals(Category.ALL)) {
-            preparedStatement.setInt(index++, boardSearchDto.getSearchCategory().getCategoryId());
+            int count = 0;
+            if (resultSet.next()) {
+                count = resultSet.getInt(1);
+            }
+
+            return count;
+        } catch (SQLException e) {
+            throw new WrapCheckedException("sql Exception", e);
         }
-        if (!boardSearchDto.getSearchKey().equals(FIND_ALL)){
-            String searchKey = boardSearchDto.getSearchKey();
-            preparedStatement.setString(index++, "%"+searchKey+"%");
-            preparedStatement.setString(index++, "%"+searchKey+"%");
-            preparedStatement.setString(index++, "%"+searchKey+"%");
-        }
-        ResultSet resultSet = preparedStatement.executeQuery();
-
-        int count = 0;
-        if (resultSet.next()) {
-            count = resultSet.getInt(1);
-        }
-
-        resultSet.close();
-        preparedStatement.close();
-        connection.close();
-
-        return count;
     }
 
     @Override
-    public List<BoardListDto> getBoardListBySearchParam(BoardSearchDto boardSearchDto, Integer currentPage, int pageOffset) throws SQLException {
-        Connection connection = ConnectionPool.getConnection();
-
+    public List<BoardListDto> getBoardListBySearchParam(BoardSearchDto boardSearchDto, Integer currentPage, int pageOffset) {
         String getBoardListSql = "SELECT b.*, c.category, (SELECT (count(*) > 0) from file as f where f.board_id = b.board_id) AS count " +
                 "FROM board AS b LEFT JOIN category AS c ON b.category_id = c.category_id " +
                 "WHERE (created_at BETWEEN ? AND ?)" ;
@@ -144,46 +117,49 @@ public class JdbcBoardDao implements BoardDao{
         getBoardListSql = getBoardListSql + categorySearchSql + searchKeySql + pageSql;
 
         int index = 1;
-        PreparedStatement preparedStatement = connection.prepareStatement(getBoardListSql);
-        preparedStatement.setTimestamp(index++, Timestamp.valueOf(boardSearchDto.getSearchStartDate()));
-        preparedStatement.setTimestamp(index++, Timestamp.valueOf(boardSearchDto.getSearchEndDate()));
 
-        if (!boardSearchDto.getSearchCategory().equals(Category.ALL)) {
-            preparedStatement.setInt(index++, boardSearchDto.getSearchCategory().getCategoryId());
+        try(
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(getBoardListSql);
+        ) {
+            preparedStatement.setTimestamp(index++, Timestamp.valueOf(boardSearchDto.getSearchStartDate()));
+            preparedStatement.setTimestamp(index++, Timestamp.valueOf(boardSearchDto.getSearchEndDate()));
+
+            if (!boardSearchDto.getSearchCategory().equals(Category.ALL)) {
+                preparedStatement.setInt(index++, boardSearchDto.getSearchCategory().getCategoryId());
+            }
+            if (!boardSearchDto.getSearchKey().equals(FIND_ALL)){
+                String searchKey = boardSearchDto.getSearchKey();
+                preparedStatement.setString(index++, "%"+searchKey+"%");
+                preparedStatement.setString(index++, "%"+searchKey+"%");
+                preparedStatement.setString(index++, "%"+searchKey+"%");
+            }
+
+            preparedStatement.setInt(index++, currentPage * pageOffset);
+            preparedStatement.setInt(index++, pageOffset);
+
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            List<BoardListDto> boardList = new ArrayList<>();
+            while (resultSet.next()) {
+                BoardListDto board = new BoardListDto(
+                        resultSet.getInt("b.board_id"),
+                        Category.valueOf(resultSet.getString("c.category")),
+                        resultSet.getString("b.title"),
+                        resultSet.getString("b.name"),
+                        resultSet.getInt("b.view"),
+                        resultSet.getTimestamp("b.created_at").toLocalDateTime(),
+                        resultSet.getTimestamp("b.modified_at").toLocalDateTime(),
+                        resultSet.getBoolean("count")
+                );
+                boardList.add(board);
+            }
+
+            return boardList;
+        }catch (SQLException e){
+            throw new WrapCheckedException("sql Exception", e);
         }
-        if (!boardSearchDto.getSearchKey().equals(FIND_ALL)){
-            String searchKey = boardSearchDto.getSearchKey();
-            preparedStatement.setString(index++, "%"+searchKey+"%");
-            preparedStatement.setString(index++, "%"+searchKey+"%");
-            preparedStatement.setString(index++, "%"+searchKey+"%");
-        }
-
-        preparedStatement.setInt(index++, currentPage * pageOffset);
-        preparedStatement.setInt(index++, pageOffset);
-
-
-        ResultSet resultSet = preparedStatement.executeQuery();
-
-        List<BoardListDto> boardList = new ArrayList<>();
-        while (resultSet.next()) {
-            BoardListDto board = new BoardListDto(
-                    resultSet.getInt("b.board_id"),
-                    Category.valueOf(resultSet.getString("c.category")),
-                    resultSet.getString("b.title"),
-                    resultSet.getString("b.name"),
-                    resultSet.getInt("b.view"),
-                    resultSet.getTimestamp("b.created_at").toLocalDateTime(),
-                    resultSet.getTimestamp("b.modified_at").toLocalDateTime(),
-                    resultSet.getBoolean("count")
-            );
-            boardList.add(board);
-        }
-
-        resultSet.close();
-        preparedStatement.close();
-        connection.close();
-
-        return boardList;
     }
 
     @Override
