@@ -28,7 +28,6 @@ public class JdbcFileDao implements FileDao{
 
         ) {
             for (FileCreateDto fileCreateDto : fileList) {
-//            PreparedStatement preparedStatement = connection.prepareStatement(createFileSql);
                 preparedStatement.setString(1, fileCreateDto.getOriginalFileName());
                 preparedStatement.setString(2, fileCreateDto.getFileName());
                 preparedStatement.setString(3, fileCreateDto.getFilePath());
@@ -36,50 +35,35 @@ public class JdbcFileDao implements FileDao{
                 preparedStatement.setInt(5, boardId);
 
                 preparedStatement.executeUpdate();
-//                preparedStatement.close();
             }
         } catch (SQLException e) {
             throw new WrapCheckedException("sql exception", e);
         }
-
-//        Connection connection = ConnectionPool.getConnection();
-//
-//        for (FileCreateDto fileCreateDto : fileList) {
-////            PreparedStatement preparedStatement = connection.prepareStatement(createFileSql);
-//            preparedStatement.setString(1, fileCreateDto.getOriginalFileName());
-//            preparedStatement.setString(2, fileCreateDto.getFileName());
-//            preparedStatement.setString(3, fileCreateDto.getFilePath());
-//            preparedStatement.setString(4, fileCreateDto.getExtension());
-//            preparedStatement.setInt(5, boardId);
-//
-//            preparedStatement.executeUpdate();
-//            preparedStatement.close();
-//        }
-//        connection.close();
-//
     }
 
     @Override
-    public List<FileDto> getFileByBoardId(int boardId) throws SQLException {
-        Connection connection = ConnectionPool.getConnection();
+    public List<FileDto> getFileByBoardId(int boardId) {
         String getFileSql = "SELECT * FROM file AS f WHERE (f.board_id = ?)";
 
-        PreparedStatement preparedStatement = connection.prepareStatement(getFileSql);
-        preparedStatement.setInt(1, boardId);
-        ResultSet resultSet = preparedStatement.executeQuery();
+        try (
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(getFileSql);
+        ) {
+            preparedStatement.setInt(1, boardId);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-        ArrayList<FileDto> fileDtoList = new ArrayList<>();
-        while (resultSet.next()) {
-            fileDtoList.add(new FileDto(
-                    resultSet.getInt("file_id"),
-                    resultSet.getString("original_name")
-            ));
+            ArrayList<FileDto> fileDtoList = new ArrayList<>();
+            while (resultSet.next()) {
+                fileDtoList.add(new FileDto(
+                        resultSet.getInt("file_id"),
+                        resultSet.getString("original_name")
+                ));
+            }
+
+            return fileDtoList;
+        } catch (SQLException e) {
+            throw new WrapCheckedException("sql Exception", e);
         }
-
-        preparedStatement.close();
-        connection.close();
-
-        return fileDtoList;
     }
 
     @Override

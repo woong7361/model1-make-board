@@ -23,25 +23,29 @@
     <title>board</title>
 <%
 
-    int boardId = Optional.ofNullable(request.getParameter("board_id"))
-            .map((id) -> Integer.parseInt(id))
-            .orElseThrow(() -> new IllegalArgumentException("invalid board_id"));
+//    int boardId = Optional.ofNullable(request.getParameter("board_id"))
+//            .map((id) -> Integer.parseInt(id))
+//            .orElseThrow(() -> new IllegalArgumentException("invalid board_id"));
+//
+//    BoardDao boardDao = new JdbcBoardDao();
+//
+//    BoardDto boardDto = boardDao
+//            .getBoardByBoardId(boardId)
+//            .orElseThrow(() -> new IllegalArgumentException());
+//
+//    FileDao fileDao = new JdbcFileDao();
+//    List<FileDto> fileDtoList = fileDao.getFileByBoardId(boardId);
+//
+//    CommentDao commentDao = new JdbcCommentDao();
+//    List<CommentDto> commentList = commentDao.getCommentByBoardId(boardId);
+//
+//    boardDao.addBoardViewByBoardId(boardId);
 
-    BoardDao boardDao = new JdbcBoardDao();
+    BoardDto boardDto = (BoardDto) request.getAttribute("boardDto");
+    List<FileDto> fileDtoList = (List<FileDto>) request.getAttribute("fileDtoList");
+    List<CommentDto> commentList = (List<CommentDto>) request.getAttribute("commentList");
 
-    BoardDto boardDto = boardDao
-            .getBoardByBoardId(boardId)
-            .orElseThrow(() -> new IllegalArgumentException());
 
-//    BoardDto boardDto = (BoardDto) request.getAttribute("boardDto");
-
-    FileDao fileDao = new JdbcFileDao();
-    List<FileDto> fileDtoList = fileDao.getFileByBoardId(boardId);
-
-    CommentDao commentDao = new JdbcCommentDao();
-    List<CommentDto> commentList = commentDao.getCommentByBoardId(boardId);
-
-    boardDao.addBoardViewByBoardId(boardId);
 
     String searchParamWithBoardId = UrlUtil.getSearchParamWithBoardIdAndPage(request);
 %>

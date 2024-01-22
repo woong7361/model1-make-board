@@ -248,17 +248,18 @@ public class JdbcBoardDao implements BoardDao{
     }
 
     @Override
-    public void addBoardViewByBoardId(int boardId) throws SQLException{
-        Connection connection = ConnectionPool.getConnection();
+    public void addBoardViewByBoardId(int boardId) {
         String getBoardSql = "UPDATE board SET view = (view+1) WHERE board_id = ?";
 
-        PreparedStatement preparedStatement = connection.prepareStatement(getBoardSql);
-        preparedStatement.setInt(1, boardId);
-        preparedStatement.executeUpdate();
-
-        preparedStatement.close();
-        connection.close();
-
+        try (
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(getBoardSql);
+        ) {
+            preparedStatement.setInt(1, boardId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new WrapCheckedException("sql Exception", e);
+        }
     }
 
     @Override

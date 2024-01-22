@@ -9,7 +9,7 @@ import java.util.List;
 public interface CommentDao {
     void saveComment(CommentCreateDto commentCreateDto) throws SQLException;
 
-    List<CommentDto> getCommentByBoardId(int boardId) throws SQLException;
+    List<CommentDto> getCommentByBoardId(int boardId);
 
     void deleteByBoardId(int boardId) throws SQLException;
 }

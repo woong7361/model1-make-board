@@ -3,6 +3,7 @@ package com.study.comment.dao;
 import com.study.comment.dto.CommentCreateDto;
 import com.study.comment.dto.CommentDto;
 import com.study.connection.ConnectionPool;
+import com.study.exception.WrapCheckedException;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -29,28 +30,29 @@ public class JdbcCommentDao implements CommentDao{
     }
 
     @Override
-    public List<CommentDto> getCommentByBoardId(int boardId) throws SQLException {
-        Connection connection = ConnectionPool.getConnection();
+    public List<CommentDto> getCommentByBoardId(int boardId) {
         String getCommentSql = "SELECT * FROM comment WHERE board_id = ?";
 
-        PreparedStatement preparedStatement = connection.prepareStatement(getCommentSql);
-        preparedStatement.setInt(1, boardId);
-        ResultSet resultSet = preparedStatement.executeQuery();
+        try (
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(getCommentSql);
+                ) {
+            preparedStatement.setInt(1, boardId);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-        List<CommentDto> commentList = new ArrayList<>();
-        while (resultSet.next()) {
-            commentList.add(new CommentDto(
-                    resultSet.getInt("comment_id"),
-                    resultSet.getString("content"),
-                    resultSet.getTimestamp("created_at").toLocalDateTime()
-            ));
+            List<CommentDto> commentList = new ArrayList<>();
+            while (resultSet.next()) {
+                commentList.add(new CommentDto(
+                        resultSet.getInt("comment_id"),
+                        resultSet.getString("content"),
+                        resultSet.getTimestamp("created_at").toLocalDateTime()
+                ));
+            }
+
+            return commentList;
+        } catch (SQLException e) {
+            throw new WrapCheckedException("sql Exception", e);
         }
-
-        resultSet.close();
-        preparedStatement.close();
-        connection.close();
-
-        return commentList;
     }
 
 

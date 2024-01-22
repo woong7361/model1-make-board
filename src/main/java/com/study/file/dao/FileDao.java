@@ -12,7 +12,7 @@ public interface FileDao {
 
     void saveFileListIdList(List<FileCreateDto> fileList, int boardId);
 
-    List<FileDto> getFileByBoardId(int boardId) throws SQLException;
+    List<FileDto> getFileByBoardId(int boardId);
 
     Optional<FileDownloadDto> getFileByFileId(int fileId) throws SQLException;
 
