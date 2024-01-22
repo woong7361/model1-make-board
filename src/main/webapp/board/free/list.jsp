@@ -1,6 +1,5 @@
 <%@ page import="com.study.board.dto.BoardListDto" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.study.util.UrlUtil" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="static com.study.util.UrlUtil.getSearchParam" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -14,8 +13,6 @@
     int currentPage = (int) request.getAttribute("currentPage");
     int totalCount = (int) request.getAttribute("totalCount");
     List<BoardListDto> boardList = (List<BoardListDto>) request.getAttribute("boardList");
-
-
 
     //TODO view logic으로 따로 빼기
     List<String> pageLinkList = new ArrayList<>();
@@ -98,7 +95,7 @@
                         <td></td>
                     <%} %>
                     <td>
-                        <a href="/board/free/view.jsp<%=searchParam%>&page=<%=currentPage%>&board_id=<%=board.getBoardId()%>">
+                        <a href="/controller/board/view<%=searchParam%>&page=<%=currentPage%>&board_id=<%=board.getBoardId()%>">
                             <%=board.getTitle() %>
                         </a>
                     </td>

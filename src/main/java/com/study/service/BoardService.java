@@ -24,8 +24,7 @@ import java.util.List;
 
 import static com.study.config.ConfigConst.PAGE_OFFSET;
 import static com.study.constant.ControllerUriConstant.BOARD_VIEW_CONTROLLER_URI;
-import static com.study.constant.ViewUriConstant.BOARD_LIST_VIEW_URI;
-import static com.study.constant.ViewUriConstant.BOARD_VIEW_URI;
+import static com.study.constant.ViewUriConstant.*;
 
 /**
  * board의 business logic을 담당한다
@@ -64,7 +63,7 @@ public class BoardService {
      * @param request
      * @param response
      */
-    public void view(HttpServletRequest request, HttpServletResponse response) {
+    public void boardView(HttpServletRequest request, HttpServletResponse response) {
         int boardId = requestHandler.getBoardId(request);
 
         BoardDto boardDto = boardDao.getBoardByBoardId(boardId)
@@ -101,6 +100,25 @@ public class BoardService {
         forward(request, response, BOARD_LIST_VIEW_URI);
     }
 
+    /**
+     * set Attribute for update view
+     *
+     * @param request
+     * @param response
+     */
+    public void updateBoardView(HttpServletRequest request, HttpServletResponse response) {
+        int boardId = requestHandler.getBoardId(request);
+
+        BoardDto boardDto = boardDao.getBoardByBoardId(boardId).
+                orElseThrow(() -> new IllegalArgumentException("not exist board"));
+        List<FileDto> fileList = fileDao.getFileByBoardId(boardId);
+
+        request.setAttribute("boardId", boardId);
+        request.setAttribute("boardDto", boardDto);
+        request.setAttribute("fileList", fileList);
+
+        forward(request, response, BOARD_UPDATE_VIEW_URI);
+    }
 
 
 //    ------------------------------------------------------------------------------------------------------------------

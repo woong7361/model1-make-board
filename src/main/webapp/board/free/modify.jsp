@@ -1,9 +1,4 @@
-<%@ page import="com.study.board.dao.JdbcBoardDao" %>
-<%@ page import="com.study.board.dao.BoardDao" %>
-<%@ page import="java.util.Optional" %>
 <%@ page import="com.study.board.dto.BoardDto" %>
-<%@ page import="com.study.file.dao.JdbcFileDao" %>
-<%@ page import="com.study.file.dao.FileDao" %>
 <%@ page import="com.study.file.dto.FileDto" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.study.util.UrlUtil" %>
@@ -20,16 +15,9 @@
 <%
     request.setCharacterEncoding("UTF-8");
 
-    int boardId = Optional.ofNullable(request.getParameter("board_id"))
-            .map((id) -> Integer.parseInt(id))
-            .orElseThrow(() -> new IllegalArgumentException("invalid board_id"));
-
-    BoardDao boardDao = new JdbcBoardDao();
-    BoardDto boardDto = boardDao.getBoardByBoardId(boardId).
-            orElseThrow(() -> new IllegalArgumentException("not exist board"));
-
-    FileDao fileDao = new JdbcFileDao();
-    List<FileDto> fileList = fileDao.getFileByBoardId(boardId);
+    int boardId = (int) request.getAttribute("boardId");
+    BoardDto boardDto = (BoardDto) request.getAttribute("boardDto");
+    List<FileDto> fileList = (List<FileDto>) request.getAttribute("fileList");
 
     String searchParamWithBoardId = UrlUtil.getSearchParamWithBoardIdAndPage(request);
 %>

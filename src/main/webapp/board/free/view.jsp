@@ -1,14 +1,7 @@
-<%@ page import="com.study.board.dao.BoardDao" %>
-<%@ page import="com.study.board.dao.JdbcBoardDao" %>
 <%@ page import="com.study.board.dto.BoardDto" %>
 <%@ page import="com.study.comment.dto.CommentDto" %>
-<%@ page import="com.study.file.dao.JdbcFileDao" %>
-<%@ page import="com.study.file.dao.FileDao" %>
 <%@ page import="com.study.file.dto.FileDto" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.study.comment.dao.JdbcCommentDao" %>
-<%@ page import="com.study.comment.dao.CommentDao" %>
-<%@ page import="java.util.Optional" %>
 <%@ page import="com.study.util.UrlUtil" %>
 <%--
   Created by IntelliJ IDEA.
@@ -22,30 +15,9 @@
 <head>
     <title>board</title>
 <%
-
-//    int boardId = Optional.ofNullable(request.getParameter("board_id"))
-//            .map((id) -> Integer.parseInt(id))
-//            .orElseThrow(() -> new IllegalArgumentException("invalid board_id"));
-//
-//    BoardDao boardDao = new JdbcBoardDao();
-//
-//    BoardDto boardDto = boardDao
-//            .getBoardByBoardId(boardId)
-//            .orElseThrow(() -> new IllegalArgumentException());
-//
-//    FileDao fileDao = new JdbcFileDao();
-//    List<FileDto> fileDtoList = fileDao.getFileByBoardId(boardId);
-//
-//    CommentDao commentDao = new JdbcCommentDao();
-//    List<CommentDto> commentList = commentDao.getCommentByBoardId(boardId);
-//
-//    boardDao.addBoardViewByBoardId(boardId);
-
     BoardDto boardDto = (BoardDto) request.getAttribute("boardDto");
     List<FileDto> fileDtoList = (List<FileDto>) request.getAttribute("fileDtoList");
     List<CommentDto> commentList = (List<CommentDto>) request.getAttribute("commentList");
-
-
 
     String searchParamWithBoardId = UrlUtil.getSearchParamWithBoardIdAndPage(request);
 %>
@@ -120,8 +92,8 @@
     </div>
 
     <div id="board_footer">
-        <button onclick="location.href='/board/free/list.jsp<%=searchParamWithBoardId%>'">목록</button>
-        <button onclick="location.href='/board/free/modify.jsp<%=searchParamWithBoardId%>'">수정</button>
+        <button onclick="location.href='/controller/board/list<%=searchParamWithBoardId%>'">목록</button>
+        <button onclick="location.href='/controller/board/modify<%=searchParamWithBoardId%>'">수정</button>
         <button onclick="location.href='/data/delete-board.jsp<%=searchParamWithBoardId%>'">삭제</button>
     </div>
 </div>

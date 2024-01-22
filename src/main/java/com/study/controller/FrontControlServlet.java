@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +30,7 @@ public class FrontControlServlet extends HttpServlet {
         controllerMap.put(BOARD_WRITE_CONTROLLER_URI, new WriteController());
         controllerMap.put(BOARD_VIEW_CONTROLLER_URI, new BoardViewController());
         controllerMap.put(BOARD_LIST_VIEW_CONTROLLER_URI, new BoardListViewController());
+        controllerMap.put(BOARD_MODIFY_CONTROLLER_URI, new BoardMordifyController());
 
         super.init();
     }
