@@ -67,28 +67,29 @@ public class JdbcFileDao implements FileDao{
     }
 
     @Override
-    public Optional<FileDownloadDto> getFileByFileId(int fileId) throws SQLException {
-        Connection connection = ConnectionPool.getConnection();
+    public Optional<FileDownloadDto> getFileByFileId(int fileId) {
         String getFileSql = "SELECT * FROM file WHERE (file_id = ?)";
 
-        PreparedStatement preparedStatement = connection.prepareStatement(getFileSql);
-        preparedStatement.setInt(1, fileId);
-        ResultSet resultSet = preparedStatement.executeQuery();
+        try(
+                Connection connection = ConnectionPool.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(getFileSql);
+                ) {
+            preparedStatement.setInt(1, fileId);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-        Optional<FileDownloadDto> fileDto = Optional.empty();
-        if (resultSet.next()) {
-            fileDto = Optional.of(new FileDownloadDto(
-                    resultSet.getString("original_name"),
-                    resultSet.getString("name"),
-                    resultSet.getString("path")
-            ));
+            Optional<FileDownloadDto> fileDto = Optional.empty();
+            if (resultSet.next()) {
+                fileDto = Optional.of(new FileDownloadDto(
+                        resultSet.getString("original_name"),
+                        resultSet.getString("name"),
+                        resultSet.getString("path")
+                ));
+            }
+
+            return fileDto;
+        }catch (SQLException e) {
+            throw new WrapCheckedException("sql Exception", e);
         }
-
-        preparedStatement.close();
-        connection.close();
-
-        return fileDto;
-
     }
 
     @Override

@@ -14,7 +14,7 @@ public interface FileDao {
 
     List<FileDto> getFileByBoardId(int boardId);
 
-    Optional<FileDownloadDto> getFileByFileId(int fileId) throws SQLException;
+    Optional<FileDownloadDto> getFileByFileId(int fileId);
 
     void deleteFileByListIdList(List<Integer> deleteFileIdList);
 

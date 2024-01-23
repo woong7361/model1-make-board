@@ -35,6 +35,7 @@ public class RequestHandler {
     private static final String TITLE_PARAM = "title";
     private static final String CONTENT_PARAM = "content";
     private static final String BOARD_ID_PARAM = "board_id";
+    public static final String FILE_ID_PARAM = "file_id";
 
 
     private final MultipartHandler multipartHandler = new MultipartHandler();
@@ -108,6 +109,10 @@ public class RequestHandler {
 
     public int getBoardId(HttpServletRequest request) {
         return getIntParameterOrElseThrow(request, BOARD_ID_PARAM);
+    }
+
+    public int getFileId(HttpServletRequest request) {
+        return getIntParameterOrElseThrow(request, FILE_ID_PARAM);
     }
 
 //    ------------------------------------------------------------------------------------------------------------------

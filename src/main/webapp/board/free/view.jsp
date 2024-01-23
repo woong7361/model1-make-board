@@ -71,7 +71,7 @@
         <h3>파일 다운로드</h3>
         <%for(FileDto fileDto : fileDtoList){ %>
         <dl>
-            <a href="/file/download.jsp?file_id=<%=fileDto.getFileId()%>">＊ 파일 - <%=fileDto.getOriginalName()%></a>
+            <a href="/controller/file/download?file_id=<%=fileDto.getFileId()%>">＊ 파일 - <%=fileDto.getOriginalName()%></a>
         </dl>
         <%} %>
     </div>

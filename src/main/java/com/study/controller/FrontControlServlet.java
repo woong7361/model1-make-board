@@ -35,6 +35,7 @@ public class FrontControlServlet extends HttpServlet {
         controllerMap.put(BOARD_DELETE_CONTROLLER_URI, new BoardDeleteController());
         controllerMap.put(BOARD_WRITE_VIEW_CONTROLLER_URI, new BoardWriteViewController());
         controllerMap.put(COMMENT_CREATE_CONTROLLER_URI, new CommentWriteController());
+        controllerMap.put(FILE_DOWNLOAD_CONTROLLER_URI, new FileDownloadController());
 
         super.init();
     }
