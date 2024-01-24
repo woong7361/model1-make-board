@@ -25,7 +25,6 @@ public class CommentService {
         this.requestHandler = new RequestHandler();
     }
 
-
     /**
      * 코멘트를 생성한다.
      *

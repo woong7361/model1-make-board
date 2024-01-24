@@ -20,14 +20,49 @@ public class PatternValidator {
     static final String CONTENT_PATTERN = ".{4,2000}$";
     static final String PK_PATTERN = "^[0-9]+$";
 
-    public void validateParameterPattern(String str, String pattern) {
+    /**
+     * board 생성 요청으로 들어온 param을 검증한다.
+     * @param multipartRequest
+     */
+    public void validateCreateBoardRequest(MultipartRequest multipartRequest) {
+        validateBoardCategory(multipartRequest.getParameter(CATEGORY_PARAM));
+        validateParameterPattern(multipartRequest.getParameter(PASSWORD_PARAM), PASSWORD_PATTERN);
+        validateParameterPattern(multipartRequest.getParameter(NAME_PARAM), NAME_PATTERN);
+        validateParameterPattern(multipartRequest.getParameter(TITLE_PARAM), TITLE_PATTERN);
+        validateParameterPattern(multipartRequest.getParameter(BOARD_CONTENT_PARAM), CONTENT_PATTERN);
+
+    }
+
+    /**
+     * comment 생성 요청으로 들어온 param을 검증한다.
+     * @param request
+     */
+    public void validateCreateComment(HttpServletRequest request) {
+        validateParameterPattern(request.getParameter(BOARD_ID_PARAM), PK_PATTERN);
+        validateParameterPattern(request.getParameter(COMMENT_CONTENT_PARAM), CONTENT_PATTERN);
+
+    }
+
+    /**
+     * board 수정 요청으로 들어온 param을 검증한다.
+     * @param multipartRequest
+     */
+    public void validateModifyBoardRequest(MultipartRequest multipartRequest) {
+        validateParameterPattern(multipartRequest.getParameter(NAME_PARAM), NAME_PATTERN);
+        validateParameterPattern(multipartRequest.getParameter(PASSWORD_PARAM), PASSWORD_PATTERN);
+        validateParameterPattern(multipartRequest.getParameter(TITLE_PARAM), TITLE_PATTERN);
+        validateParameterPattern(multipartRequest.getParameter(BOARD_CONTENT_PARAM), CONTENT_PATTERN);
+    }
+
+//    ------------------------------------------------------------------------------------------------------------------
+    private void validateParameterPattern(String str, String pattern) {
         Optional
                 .ofNullable(str)
                 .filter((s) -> Pattern.matches(pattern, s))
                 .orElseThrow(() -> new IllegalArgumentException("invalid request param"));
     }
 
-    public void validateBoardCategory(String category) {
+    private void validateBoardCategory(String category) {
         Category[] categories = Category.values();
 
         boolean match = Arrays.stream(categories)
