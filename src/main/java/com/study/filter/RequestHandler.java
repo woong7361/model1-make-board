@@ -10,11 +10,13 @@ import com.study.file.dto.FileCreateDto;
 import com.study.filter.multitpart.MultipartHandler;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.*;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,7 +32,7 @@ public class RequestHandler {
     private static final int FIRST_PAGE = 0;
 
     private final MultipartHandler multipartHandler = new MultipartHandler();
-    private final PatternValidator patternValidator = new PatternValidator();
+    private final Validator validator = new Validator();
 
 
     /**
@@ -64,7 +66,7 @@ public class RequestHandler {
     public BoardCreateDto getBoardCreateDto(HttpServletRequest request) {
         MultipartRequest multipartRequest = multipartHandler.getMultipartRequest(request);
 
-        patternValidator.validateCreateBoardRequest(multipartRequest);
+        validator.validateCreateBoardRequest(multipartRequest);
 
         List<FileCreateDto> fileList = this.getFileCreateDtoList(multipartRequest);
 
@@ -85,7 +87,7 @@ public class RequestHandler {
     public BoardModifyDto getBoardModifyDto(HttpServletRequest request) {
         MultipartRequest multipartRequest = multipartHandler.getMultipartRequest(request);
 
-        patternValidator.validateModifyBoardRequest(multipartRequest);
+        validator.validateModifyBoardRequest(multipartRequest);
 
         List<FileCreateDto> fileCreateList = this.getFileCreateDtoList(multipartRequest);
         List<Integer> deleteFileIdList = getFileDeleteIdList(multipartRequest);
@@ -108,7 +110,7 @@ public class RequestHandler {
      * @return
      */
     public CommentCreateDto getCommentCreateDto(HttpServletRequest request) {
-        patternValidator.validateCreateComment(request);
+        validator.validateCreateComment(request);
 
         return CommentCreateDto.builder()
                 .board_id(Integer.parseInt(request.getParameter(BOARD_ID_PARAM)))
@@ -181,7 +183,7 @@ public class RequestHandler {
             FileCreateDto fileCreateDto = FileCreateDto.builder()
                     .originalFileName(multipartRequest.getOriginalFileName(fileParam))
                     .fileName(file.getName())
-                    .filePath(file.getAbsolutePath())
+                    .filePath(getFilePath(file))
                     .extension(extension)
                     .build();
 
@@ -208,9 +210,18 @@ public class RequestHandler {
 
     private String getExtension(File file) {
         String[] nameSplitList = file.getName().split("[.]");
+
         String extension = nameSplitList[nameSplitList.length - 1];
         return extension;
     }
 
+    private String getFilePath(File file) {
+        String[] nameSplitList = file.getAbsolutePath().split("[/]");
+        List<String> list = new ArrayList<>(Arrays.asList(nameSplitList));
+        list.remove(list.size() - 1);
+
+        String name = String.join("/", list);
+        return name;
+    }
 
 }

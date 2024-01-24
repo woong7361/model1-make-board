@@ -37,7 +37,7 @@ public class FileService {
         FileDownloadDto fileDto = fileDao.getFileDownloadDtoByFileId(fileId)
                 .orElseThrow(() -> new IllegalArgumentException("invalid fileId"));
 
-        File file = new File(fileDto.getPath());
+        File file = new File(fileDto.getPath() + "/" + fileDto.getName());
 
         String mimeType = request.getServletContext().getMimeType(file.toString());
         System.out.println("mimeType = " + mimeType);
