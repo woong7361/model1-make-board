@@ -13,6 +13,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+/**
+ * file의 business logic을 담당
+ */
 public class FileService {
     private final FileDao fileDao;
     private final RequestHandler requestHandler;
@@ -22,6 +25,12 @@ public class FileService {
         this.requestHandler = new RequestHandler();
     }
 
+    /**
+     * download file
+     *
+     * @param request
+     * @param response
+     */
     public void downloadFile(HttpServletRequest request, HttpServletResponse response) {
         int fileId = requestHandler.getFileId(request);
 

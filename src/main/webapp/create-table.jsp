@@ -1,6 +1,6 @@
 <%@ page import="java.sql.Connection" %>
 <%@ page import="java.sql.Statement" %>
-<%@ page import="com.study.connection.ConnectionPool" %><%--
+<%@ page import="com.study.connection.DBConnection" %><%--
   Created by IntelliJ IDEA.
   User: woong
   Date: 24. 1. 14.
@@ -14,7 +14,7 @@
 </head>
 <body>
 <%
-    Connection connection = ConnectionPool.getConnection();
+    Connection connection = DBConnection.getConnection();
 
     String createCategoryTableSql = "CREATE TABLE category (" +
             "category_id INT AUTO_INCREMENT PRIMARY KEY, " +

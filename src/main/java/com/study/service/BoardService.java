@@ -26,7 +26,7 @@ import static com.study.constant.ControllerUriConstant.BOARD_VIEW_CONTROLLER_URI
 import static com.study.constant.ViewUriConstant.*;
 
 /**
- * board의 business logic을 담당한다
+ * board의 business logic을 담당
  */
 public class BoardService {
     private final BoardDao boardDao;
@@ -42,7 +42,7 @@ public class BoardService {
     }
 
     /**
-     * create board
+     * 게시글을 생성한다.
      *
      * @param request
      * @param response
@@ -57,8 +57,11 @@ public class BoardService {
     }
 
     /**
-     * set Attribute for view and add view count
+     * 게시글 view를 위한 모델을 생성후 위임한다.
      *
+     * <p>
+     *     model을 생성하고 viewcount를 올려준다
+     * </p>
      * @param request
      * @param response
      */
@@ -80,7 +83,11 @@ public class BoardService {
     }
 
     /**
-     * set Attribute for list view
+     * 게시글 list view를 위한 모델을 생성후 위임한다.
+     *
+     * <p>
+     *     들어온 검색 조건과 pageOffset을 통해 보여줄 board list를 paging한다.
+     * </p>
      *
      * @param request
      * @param response
@@ -100,7 +107,7 @@ public class BoardService {
     }
 
     /**
-     * set Attribute for update view
+     * 게시글 update view를 위한 모델을 생성후 위임한다.
      *
      * @param request
      * @param response

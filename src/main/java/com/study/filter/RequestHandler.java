@@ -19,28 +19,25 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.study.constant.RequestParamConstant.*;
+
+/**
+ * servlet 이후 HTTP request의 전처리를 담당한다.
+ *
+ * <p>검증, multipart handling, deserialization 담당한다.</p>
+ */
 public class RequestHandler {
     private static final int FIRST_PAGE = 0;
-    private static final String SEARCH_KEY_PARAM = "search_key";
-    private static final String SEARCH_END_DATE_PARAM = "end_date";
-    private static final String SEARCH_START_DATE_PARAM = "start_date";
-    private static final String SEARCH_CATEGORY_PARAM = "search_category";
-
-
-    private static final String PAGE_PARAM = "page";
-    private static final String FIND_ALL = "ALL";
-    private static final String CATEGORY_PARAM = "category";
-    private static final String NAME_PARAM = "name";
-    private static final String PASSWORD_PARAM = "password";
-    private static final String TITLE_PARAM = "title";
-    private static final String CONTENT_PARAM = "content";
-    private static final String BOARD_ID_PARAM = "board_id";
-    public static final String FILE_ID_PARAM = "file_id";
-
 
     private final MultipartHandler multipartHandler = new MultipartHandler();
-    private static PatternValidator patternValidator = new PatternValidator();
+    private final PatternValidator patternValidator = new PatternValidator();
 
+
+    /**
+     * request param에서 boardSearchDto를 가져온다.
+     * @param request
+     * @return BoardSearchDto
+     */
     public BoardSearchDto getBoardSearchDto(HttpServletRequest request) {
          return new BoardSearchDto(
                 getStringParameterWithDefaultValue(request, SEARCH_KEY_PARAM, FIND_ALL),
@@ -50,16 +47,19 @@ public class RequestHandler {
         );
     }
 
+    /**
+     * request param에서 현재 페이지를 가져온다.
+     * @param request
+     * @return parma이 있다면 현제패이지를 반환하고, 없다면 첫페이지를 반환한다.
+     */
     public int getCurrentPage(HttpServletRequest request) {
         return getIntParameterWithDefaultValue(request, PAGE_PARAM, FIRST_PAGE);
     }
 
 
     /**
-     * get BoardCreateDto By Request
-     *
+     * request param에서 BoardCreateDto를 가져온다.
      * @param request
-     * @return
      */
     public BoardCreateDto getBoardCreateDto(HttpServletRequest request) {
         MultipartRequest multipartRequest = multipartHandler.getMultipartRequest(request);
@@ -78,6 +78,10 @@ public class RequestHandler {
         );
     }
 
+    /**
+     * request param에서 BoardModifyDto를 가져온다.
+     * @param request
+     */
     public BoardModifyDto getBoardModifyDto(HttpServletRequest request) {
         MultipartRequest multipartRequest = multipartHandler.getMultipartRequest(request);
 
@@ -98,6 +102,11 @@ public class RequestHandler {
     }
 
 
+    /**
+     * request param에서 CommentCreateDto를 가져온다.
+     * @param request
+     * @return
+     */
     public CommentCreateDto getCommentCreateDto(HttpServletRequest request) {
         patternValidator.validateCreateComment(request);
 
@@ -107,10 +116,20 @@ public class RequestHandler {
         );
     }
 
+    /**
+     * request param에서 BoardId를 가져온다.
+     * @param request
+     * @return
+     */
     public int getBoardId(HttpServletRequest request) {
         return getIntParameterOrElseThrow(request, BOARD_ID_PARAM);
     }
 
+    /**
+     * request param에서 FileId를 가져온다.
+     * @param request
+     * @return
+     */
     public int getFileId(HttpServletRequest request) {
         return getIntParameterOrElseThrow(request, FILE_ID_PARAM);
     }

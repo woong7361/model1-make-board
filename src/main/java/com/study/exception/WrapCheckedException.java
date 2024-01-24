@@ -1,5 +1,8 @@
 package com.study.exception;
 
+/**
+ * checked exception을 wrapping한 custom Exception class
+ */
 public class WrapCheckedException extends RuntimeException {
 
     private Exception checkedException;

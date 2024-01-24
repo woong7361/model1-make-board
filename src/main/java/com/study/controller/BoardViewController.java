@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * board view 요청을 처리
+ * 게시글 화면 컨트롤러
  */
 public class BoardViewController implements Controller{
     @Override

@@ -2,7 +2,7 @@ package com.study.comment.dao;
 
 import com.study.comment.dto.CommentCreateDto;
 import com.study.comment.dto.CommentDto;
-import com.study.connection.ConnectionPool;
+import com.study.connection.DBConnection;
 import com.study.exception.WrapCheckedException;
 
 import java.sql.*;
@@ -18,7 +18,7 @@ public class JdbcCommentDao implements CommentDao{
                 "VALUES (?, ?, ?)";
 
         try(
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(createCommentSql);
                 ){
 
@@ -37,7 +37,7 @@ public class JdbcCommentDao implements CommentDao{
         String getCommentSql = "SELECT * FROM comment WHERE board_id = ?";
 
         try (
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(getCommentSql);
                 ) {
             preparedStatement.setInt(1, boardId);
@@ -63,7 +63,7 @@ public class JdbcCommentDao implements CommentDao{
         String deleteSql = "DELETE FROM comment WHERE board_id = ?";
 
         try(
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
 
                 ){

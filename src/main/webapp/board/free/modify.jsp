@@ -106,7 +106,7 @@
                             <div id="file_delete<%=i%>">
                                 <%FileDto file = fileList.remove(0);%>
                                 <%=file.getOriginalName()%>
-                                <input type="button" value="Download" onclick="location.href='/file/download.jsp?file_id=<%=file.getFileId()%>'">
+                                <input type="button" value="Download" onclick="location.href='/controller/file/download?file_id=<%=file.getFileId()%>'">
                                 <input type="button" name="file_delete<%=i%>" value="X" onclick="file_delete('file_delete<%=i%>', <%=file.getFileId()%>)">
                             </div>
                         <%} %>

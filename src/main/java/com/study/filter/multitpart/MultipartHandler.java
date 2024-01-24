@@ -2,25 +2,26 @@ package com.study.filter.multitpart;
 
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.FileRenamePolicy;
+import com.study.exception.WrapCheckedException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-public class MultipartHandler {
+import static com.study.config.ConfigConst.*;
 
-    public static final String SAVE_DIR = "/files";
-    public static final int MAX_FILE_SIZE = 1024 * 1024 * 5;
-    public static final String UTF_8_ENCODE_TYPE = "UTF-8";
+/**
+ * multipartRequest의 생성을 책임진다.
+ */
+public class MultipartHandler {
 
     public MultipartRequest getMultipartRequest(HttpServletRequest request) {
         String saveDirectoryPath = request.getSession().getServletContext().getRealPath(SAVE_DIR);
         FileRenamePolicy policy = new UniqueFileNamePolicy();
 
         try {
-            return new MultipartRequest(request, saveDirectoryPath, MAX_FILE_SIZE, UTF_8_ENCODE_TYPE, policy);
+            return new MultipartRequest(request, saveDirectoryPath, MAX_FILE_SIZE, MULTIPART_ENCODE_TYPE, policy);
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException("MULTIPART IO EXCEPTION");
+            throw new WrapCheckedException("MULTIPART IO EXCEPTION", e);
         }
     }
 }

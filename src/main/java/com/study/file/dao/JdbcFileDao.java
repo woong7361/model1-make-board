@@ -1,6 +1,6 @@
 package com.study.file.dao;
 
-import com.study.connection.ConnectionPool;
+import com.study.connection.DBConnection;
 import com.study.exception.WrapCheckedException;
 import com.study.file.dto.FileCreateDto;
 import com.study.file.dto.FileDownloadDto;
@@ -23,7 +23,7 @@ public class JdbcFileDao implements FileDao{
                 "VALUES (?, ?, ?, ?, ?)";
 
         try (
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(createFileSql);
 
         ) {
@@ -46,7 +46,7 @@ public class JdbcFileDao implements FileDao{
         String getFileSql = "SELECT * FROM file AS f WHERE (f.board_id = ?)";
 
         try (
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(getFileSql);
         ) {
             preparedStatement.setInt(1, boardId);
@@ -71,7 +71,7 @@ public class JdbcFileDao implements FileDao{
         String getFileSql = "SELECT * FROM file WHERE (file_id = ?)";
 
         try(
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(getFileSql);
                 ) {
             preparedStatement.setInt(1, fileId);
@@ -97,7 +97,7 @@ public class JdbcFileDao implements FileDao{
         String deleteFileSql = "DELETE FROM file WHERE (file_id = ?)";
 
         try (
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(deleteFileSql);
                 ) {
             for (Integer fileId : deleteFileIdList) {
@@ -115,7 +115,7 @@ public class JdbcFileDao implements FileDao{
         String deleteSql = "DELETE FROM file WHERE board_id = ?";
 
         try(
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
                 ){
             preparedStatement.setInt(1, boardId);
@@ -130,7 +130,7 @@ public class JdbcFileDao implements FileDao{
         String deleteSql = "SELECT path FROM file WHERE board_id = ?";
 
         try(
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
                 ) {
             preparedStatement.setInt(1, boardId);
@@ -154,7 +154,7 @@ public class JdbcFileDao implements FileDao{
         String deleteFileSql = "SELECT path FROM file WHERE (file_id = ?)";
 
         try (
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(deleteFileSql);
                 ) {
 

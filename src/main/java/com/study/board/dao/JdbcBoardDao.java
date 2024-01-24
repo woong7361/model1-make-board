@@ -3,7 +3,7 @@ package com.study.board.dao;
 
 import com.study.board.Category;
 import com.study.board.dto.*;
-import com.study.connection.ConnectionPool;
+import com.study.connection.DBConnection;
 import com.study.encryption.CipherEncrypt;
 import com.study.encryption.EncryptManager;
 import com.study.exception.WrapCheckedException;
@@ -26,7 +26,7 @@ public class JdbcBoardDao implements BoardDao{
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(createBoardSql, Statement.RETURN_GENERATED_KEYS);
 
         ) {
@@ -70,7 +70,7 @@ public class JdbcBoardDao implements BoardDao{
         getCountSql = getCountSql + categorySearchSql + searchKeySql;
 
         try (
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(getCountSql);
         ) {
             int index = 1;
@@ -119,7 +119,7 @@ public class JdbcBoardDao implements BoardDao{
         int index = 1;
 
         try(
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(getBoardListSql);
         ) {
             preparedStatement.setTimestamp(index++, Timestamp.valueOf(boardSearchDto.getSearchStartDate()));
@@ -171,7 +171,7 @@ public class JdbcBoardDao implements BoardDao{
                 "WHERE (b.board_id = ?)" ;
 
         try (
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(getBoardSql);
         ) {
             preparedStatement.setInt(1, boardId);
@@ -228,7 +228,7 @@ public class JdbcBoardDao implements BoardDao{
         String getBoardSql = "UPDATE board SET view = (view+1) WHERE board_id = ?";
 
         try (
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(getBoardSql);
         ) {
             preparedStatement.setInt(1, boardId);
@@ -250,7 +250,7 @@ public class JdbcBoardDao implements BoardDao{
                 "WHERE board_id = ?";
 
         try (
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(updateBoardSql);
                 ) {
             preparedStatement.setString(1, boardModifyDto.getName());
@@ -270,7 +270,7 @@ public class JdbcBoardDao implements BoardDao{
         String deleteSql = "DELETE FROM board WHERE board_id = ?";
 
         try(
-                Connection connection = ConnectionPool.getConnection();
+                Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
                 ) {
             preparedStatement.setInt(1, boardId);

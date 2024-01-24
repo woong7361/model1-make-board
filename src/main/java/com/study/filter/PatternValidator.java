@@ -8,19 +8,12 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import static com.study.constant.RequestParamConstant.*;
+
 /**
- *
+ * 정규표현식을 이용해 pattern을 검증한다.
  */
 public class PatternValidator {
-    static final String CATEGORY_PARAM = "category";
-    static final String PASSWORD_PARAM = "password";
-    static final String NAME_PARAM = "name";
-    static final String TITLE_PARAM = "title";
-    static final String BOARD_CONTENT_PARAM = "content";
-    static final String COMMENT_CONTENT_PARAM = "content";
-    static final String BOARD_ID_PARAM = "board_id";
-
-
     static final String NAME_PATTERN = "^[가-힣]{3,4}$";
     static final String PASSWORD_PATTERN = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{4,15}$";
     static final String TITLE_PATTERN = ".{4,100}$";
@@ -28,8 +21,8 @@ public class PatternValidator {
     static final String PK_PATTERN = "^[0-9]+$";
 
     /**
-     * 이 메서드의 의도.
-     * @param multipartRequest 파라미터 설명
+     * board 생성 요청으로 들어온 param을 검증한다.
+     * @param multipartRequest
      */
     public void validateCreateBoardRequest(MultipartRequest multipartRequest) {
         this.validateBoardCategory(multipartRequest.getParameter(CATEGORY_PARAM));
@@ -39,12 +32,20 @@ public class PatternValidator {
         this.validateParameterPattern(multipartRequest.getParameter(BOARD_CONTENT_PARAM), CONTENT_PATTERN);
     }
 
+    /**
+     * comment 생성 요청으로 들어온 param을 검증한다.
+     * @param request
+     */
     public void validateCreateComment(HttpServletRequest request) {
         this.validateParameterPattern(request.getParameter(BOARD_ID_PARAM), PK_PATTERN);
         this.validateParameterPattern(request.getParameter(COMMENT_CONTENT_PARAM), CONTENT_PATTERN);
 
     }
 
+    /**
+     * board 수정 요청으로 들어온 param을 검증한다.
+     * @param multipartRequest
+     */
     public void validateModifyBoardRequest(MultipartRequest multipartRequest) {
         this.validateParameterPattern(multipartRequest.getParameter(NAME_PARAM), NAME_PATTERN);
         this.validateParameterPattern(multipartRequest.getParameter(PASSWORD_PARAM), PASSWORD_PATTERN);
@@ -52,7 +53,7 @@ public class PatternValidator {
         this.validateParameterPattern(multipartRequest.getParameter(BOARD_CONTENT_PARAM), CONTENT_PATTERN);
     }
 
-    // error 설명이 매우 약함
+//----------------------------------------------------------------------------------------------------------------------
     private void validateParameterPattern(String str, String pattern) {
         Optional
                 .ofNullable(str)

@@ -13,6 +13,9 @@ import java.io.IOException;
 
 import static com.study.constant.ControllerUriConstant.BOARD_VIEW_CONTROLLER_URI;
 
+/**
+ * comment의 business logic을 담당
+ */
 public class CommentService {
     private final CommentDao commentDao;
     private final RequestHandler requestHandler;
@@ -23,6 +26,12 @@ public class CommentService {
     }
 
 
+    /**
+     * 코멘트를 생성한다.
+     *
+     * @param request
+     * @param response
+     */
     public void createComment(HttpServletRequest request, HttpServletResponse response) {
         CommentCreateDto commentCreateDto = requestHandler.getCommentCreateDto(request);
 

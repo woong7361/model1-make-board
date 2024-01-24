@@ -1,15 +1,22 @@
 package com.study.connection;
 
+import com.study.exception.WrapCheckedException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class ConnectionPool {
-    static final String DB_URL = "jdbc:mysql://localhost:3306/study";
-    static final String USER = "woong";
-    static final String PASSWORD = "woong7361";
-    static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+import static com.study.config.ConfigConst.*;
 
+/**
+ * database 연결과 connection을 관리하는 클래스
+ */
+public class DBConnection {
+
+    /**
+     * Database에서 connection을 가져온다.
+     * @return
+     */
     public static Connection getConnection() {
         Connection connection = null;
 
@@ -18,11 +25,10 @@ public class ConnectionPool {
             try {
                 connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
             } catch (SQLException e) {
-                e.printStackTrace();    // 예외 발생시 내용 출력
+                throw new WrapCheckedException("sql exception", e);
             }
         } catch (ClassNotFoundException e) {
-            System.out.println("Connection Failed. Check Driver or URL");
-            e.printStackTrace();        // 예외 발생시 내용 출력
+            throw new WrapCheckedException("sql exception", e);
         }
 
         return connection;
