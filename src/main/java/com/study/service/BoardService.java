@@ -70,7 +70,7 @@ public class BoardService {
 
         BoardDto boardDto = boardDao.getBoardByBoardId(boardId)
                 .orElseThrow(() -> new CustomException("not exist board"));
-        List<FileDto> fileDtoList = fileDao.getFileByBoardId(boardId);
+        List<FileDto> fileDtoList = fileDao.getFileDtoByBoardId(boardId);
         List<CommentDto> commentList = commentDao.getCommentByBoardId(boardId);
         boardDao.addBoardViewByBoardId(boardId);
 
@@ -117,7 +117,7 @@ public class BoardService {
 
         BoardDto boardDto = boardDao.getBoardByBoardId(boardId).
                 orElseThrow(() -> new IllegalArgumentException("not exist board"));
-        List<FileDto> fileList = fileDao.getFileByBoardId(boardId);
+        List<FileDto> fileList = fileDao.getFileDtoByBoardId(boardId);
 
         request.setAttribute("boardId", boardId);
         request.setAttribute("boardDto", boardDto);
@@ -140,7 +140,7 @@ public class BoardService {
 
         List<String> filePathList = fileDao.getFilePathListByIdList(boardModifyDto.getDeleteFileIdList());
         fileDao.deleteFileByListIdList(boardModifyDto.getDeleteFileIdList());
-        fileDao.saveFileListIdList(boardModifyDto.getCreateFileList(), boardModifyDto.getBoard_id());
+        fileDao.saveFileList(boardModifyDto.getCreateFileList(), boardModifyDto.getBoard_id());
 
         //TODO filehandler로 추출
         for (String path : filePathList) {
@@ -188,7 +188,7 @@ public class BoardService {
 
     private int createBoard(BoardCreateDto boardCreateDto) {
         int boardId = boardDao.saveBoard(boardCreateDto);
-        fileDao.saveFileListIdList(boardCreateDto.getFileList(), boardId);
+        fileDao.saveFileList(boardCreateDto.getFileList(), boardId);
 
         return boardId;
     }

@@ -34,7 +34,7 @@ public class FileService {
     public void downloadFile(HttpServletRequest request, HttpServletResponse response) {
         int fileId = requestHandler.getFileId(request);
 
-        FileDownloadDto fileDto = fileDao.getFileByFileId(fileId)
+        FileDownloadDto fileDto = fileDao.getFileDownloadDtoByFileId(fileId)
                 .orElseThrow(() -> new IllegalArgumentException("invalid fileId"));
 
         File file = new File(fileDto.getPath());

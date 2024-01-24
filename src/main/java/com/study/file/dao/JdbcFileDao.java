@@ -17,7 +17,7 @@ import java.util.Optional;
 public class JdbcFileDao implements FileDao{
 
     @Override
-    public void saveFileListIdList(List<FileCreateDto> fileList, int boardId) {
+    public void saveFileList(List<FileCreateDto> fileList, int boardId) {
         String createFileSql = "INSERT INTO file (" +
                 "original_name, name, path, extension, board_id) " +
                 "VALUES (?, ?, ?, ?, ?)";
@@ -42,7 +42,7 @@ public class JdbcFileDao implements FileDao{
     }
 
     @Override
-    public List<FileDto> getFileByBoardId(int boardId) {
+    public List<FileDto> getFileDtoByBoardId(int boardId) {
         String getFileSql = "SELECT * FROM file AS f WHERE (f.board_id = ?)";
 
         try (
@@ -67,7 +67,7 @@ public class JdbcFileDao implements FileDao{
     }
 
     @Override
-    public Optional<FileDownloadDto> getFileByFileId(int fileId) {
+    public Optional<FileDownloadDto> getFileDownloadDtoByFileId(int fileId) {
         String getFileSql = "SELECT * FROM file WHERE (file_id = ?)";
 
         try(

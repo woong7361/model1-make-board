@@ -20,15 +20,14 @@ public class JdbcBoardDao implements BoardDao{
     @Override
     public int saveBoard(BoardCreateDto boardCreateDto) {
 
-        String createBoardSql = "INSERT INTO board (" +
-                "category_id, name, password, title, " +
+        String createBoardSql = "INSERT INTO board " +
+                "(category_id, name, password, title, " +
                 "content, view, created_at, modified_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (
                 Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(createBoardSql, Statement.RETURN_GENERATED_KEYS);
-
         ) {
             EncryptManager encryptManger = new CipherEncrypt();
             String password = encryptManger.encrypt(boardCreateDto.getPassword());
@@ -44,6 +43,7 @@ public class JdbcBoardDao implements BoardDao{
             preparedStatement.executeUpdate();
 
             int boardId = 0;
+
             ResultSet rs = preparedStatement.getGeneratedKeys(); // 쿼리 실행 후 생성된 키 값 반환
             if (rs.next()) {
                 boardId = rs.getInt(1); // 키값 초기화
@@ -57,7 +57,10 @@ public class JdbcBoardDao implements BoardDao{
 
     @Override
     public int getCountBySearchParam(BoardSearchDto boardSearchDto){
-        String getCountSql = "SELECT COUNT(*) FROM board WHERE (created_at BETWEEN ? AND ?)" ;
+        String getCountSql =
+                "SELECT COUNT(*) " +
+                "FROM board " +
+                "WHERE (created_at BETWEEN ? AND ?)" ;
 
         String categorySearchSql = "";
         if (!boardSearchDto.getSearchCategory().equals(Category.ALL)){
@@ -101,8 +104,11 @@ public class JdbcBoardDao implements BoardDao{
 
     @Override
     public List<BoardListDto> getBoardListBySearchParam(BoardSearchDto boardSearchDto, Integer currentPage, int pageOffset) {
-        String getBoardListSql = "SELECT b.*, c.category, (SELECT (count(*) > 0) from file as f where f.board_id = b.board_id) AS count " +
-                "FROM board AS b LEFT JOIN category AS c ON b.category_id = c.category_id " +
+        String getBoardListSql =
+                "SELECT b.*, c.category, " +
+                        "(SELECT (count(*) > 0) from file as f where f.board_id = b.board_id) AS count " +
+                "FROM board AS b " +
+                "LEFT JOIN category AS c ON b.category_id = c.category_id " +
                 "WHERE (created_at BETWEEN ? AND ?)" ;
 
         String categorySearchSql = "";
@@ -164,9 +170,9 @@ public class JdbcBoardDao implements BoardDao{
 
     @Override
     public Optional<BoardDto> getBoardByBoardId(int boardId){
-
         String getBoardSql =
-                "SELECT b.*, (SELECT category FROM category AS c WHERE b.category_id = c.category_id) AS category " +
+                "SELECT b.*, " +
+                        "(SELECT category FROM category AS c WHERE b.category_id = c.category_id) AS category " +
                 "FROM board AS b " +
                 "WHERE (b.board_id = ?)" ;
 
@@ -196,36 +202,14 @@ public class JdbcBoardDao implements BoardDao{
         } catch (SQLException sqlException) {
             throw new WrapCheckedException("sql exception", sqlException);
         }
-//        Connection connection = ConnectionPool.getConnection();
-//        PreparedStatement preparedStatement = connection.prepareStatement(getBoardSql);
-//        preparedStatement.setInt(1, boardId);
-//
-//        ResultSet resultSet = preparedStatement.executeQuery();
-//
-//        Optional<BoardDto> boardDto = Optional.empty();
-//        if (resultSet.next()) {
-//            boardDto = Optional.of(new BoardDto(
-//                    resultSet.getInt("b.board_id"),
-//                    Category.valueOf(resultSet.getString("category")),
-//                    resultSet.getString("b.title"),
-//                    resultSet.getString("b.name"),
-//                    resultSet.getString("b.content"),
-//                    resultSet.getInt("b.view"),
-//                    resultSet.getTimestamp("b.created_at").toLocalDateTime(),
-//                    resultSet.getTimestamp("b.modified_at").toLocalDateTime()
-//            ));
-//        }
-//
-//        resultSet.close();
-//        preparedStatement.close();
-//        connection.close();
-
-//        return boardDto;
     }
 
     @Override
     public void addBoardViewByBoardId(int boardId) {
-        String getBoardSql = "UPDATE board SET view = (view+1) WHERE board_id = ?";
+        String getBoardSql =
+                "UPDATE board " +
+                "SET view = (view+1) " +
+                "WHERE board_id = ?";
 
         try (
                 Connection connection = DBConnection.getConnection();
@@ -242,11 +226,12 @@ public class JdbcBoardDao implements BoardDao{
     public void updateBoard(BoardModifyDto boardModifyDto) {
         String updateBoardSql =
                 "UPDATE board " +
-                "SET name = ?, " +
-                "password = ?, " +
-                "title = ?, " +
-                "content = ? ," +
-                "modified_at = ? " +
+                "SET " +
+                        "name = ?, " +
+                        "password = ?, " +
+                        "title = ?, " +
+                        "content = ? ," +
+                        "modified_at = ? " +
                 "WHERE board_id = ?";
 
         try (
@@ -267,7 +252,10 @@ public class JdbcBoardDao implements BoardDao{
 
     @Override
     public void deleteByBoardId(int boardId) {
-        String deleteSql = "DELETE FROM board WHERE board_id = ?";
+        String deleteSql =
+                "DELETE " +
+                "FROM board " +
+                "WHERE board_id = ?";
 
         try(
                 Connection connection = DBConnection.getConnection();

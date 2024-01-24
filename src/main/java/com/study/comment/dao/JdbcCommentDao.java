@@ -13,8 +13,9 @@ import java.util.List;
 public class JdbcCommentDao implements CommentDao{
     @Override
     public void saveComment(CommentCreateDto commentCreateDto) {
-        String createCommentSql = "INSERT INTO comment (" +
-                "content, created_at, board_id) " +
+        String createCommentSql =
+                "INSERT INTO comment " +
+                "(content, created_at, board_id) " +
                 "VALUES (?, ?, ?)";
 
         try(
@@ -34,12 +35,16 @@ public class JdbcCommentDao implements CommentDao{
 
     @Override
     public List<CommentDto> getCommentByBoardId(int boardId) {
-        String getCommentSql = "SELECT * FROM comment WHERE board_id = ?";
+        String getCommentSql =
+                "SELECT * " +
+                "FROM comment " +
+                "WHERE board_id = ?";
 
         try (
                 Connection connection = DBConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(getCommentSql);
                 ) {
+
             preparedStatement.setInt(1, boardId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -60,7 +65,10 @@ public class JdbcCommentDao implements CommentDao{
 
 
     public void deleteByBoardId(int boardId) {
-        String deleteSql = "DELETE FROM comment WHERE board_id = ?";
+        String deleteSql =
+                "DELETE " +
+                "FROM comment " +
+                "WHERE board_id = ?";
 
         try(
                 Connection connection = DBConnection.getConnection();
