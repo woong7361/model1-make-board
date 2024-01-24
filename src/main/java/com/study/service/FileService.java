@@ -26,10 +26,10 @@ public class FileService {
     }
 
     /**
-     * download file
+     * file을 실제 다운로드 한다.
      *
-     * @param request
-     * @param response
+     * @param request http request
+     * @param response http response
      */
     public void downloadFile(HttpServletRequest request, HttpServletResponse response) {
         int fileId = requestHandler.getFileId(request);

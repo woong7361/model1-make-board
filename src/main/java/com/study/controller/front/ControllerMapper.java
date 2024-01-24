@@ -30,8 +30,8 @@ public class ControllerMapper {
     /**
      * URI와 대응하는 Controller를 매핑한다.
      *
-     * @param request
-     * @param response
+     * @param request http request
+     * @param response http response
      */
     public void mapping(HttpServletRequest request, HttpServletResponse response) {
         String requestURI = request.getRequestURI();

@@ -42,10 +42,10 @@ public class BoardService {
     }
 
     /**
-     * 게시글을 생성한다.
+     * 게시글을 생성후 게시글 페이지로 forward 한다.
      *
-     * @param request
-     * @param response
+     * @param request http request
+     * @param response http response
      */
     public void write(HttpServletRequest request, HttpServletResponse response) {
         BoardCreateDto boardCreateDto = requestHandler.getBoardCreateDto(request);
@@ -57,13 +57,13 @@ public class BoardService {
     }
 
     /**
-     * 게시글 view를 위한 모델을 생성후 위임한다.
+     * 게시글 view를 위한 모델을 생성후 forward 한다.
      *
      * <p>
      *     model을 생성하고 viewcount를 올려준다
      * </p>
-     * @param request
-     * @param response
+     * @param request http request
+     * @param response http response
      */
     public void boardView(HttpServletRequest request, HttpServletResponse response) {
         int boardId = requestHandler.getBoardId(request);
@@ -83,14 +83,14 @@ public class BoardService {
     }
 
     /**
-     * 게시글 list view를 위한 모델을 생성후 위임한다.
+     * 게시글 list view를 위한 모델을 생성후 forward 한다.
      *
      * <p>
      *     들어온 검색 조건과 pageOffset을 통해 보여줄 board list를 paging한다.
      * </p>
      *
-     * @param request
-     * @param response
+     * @param request http request
+     * @param response http response
      */
     public void listView(HttpServletRequest request, HttpServletResponse response) {
         BoardSearchDto boardSearchDto = requestHandler.getBoardSearchDto(request);
@@ -107,10 +107,10 @@ public class BoardService {
     }
 
     /**
-     * 게시글 update view를 위한 모델을 생성후 위임한다.
+     * 게시글 update view를 위한 모델을 생성후 forward한다.
      *
-     * @param request
-     * @param response
+     * @param request http request
+     * @param response http response
      */
     public void updateBoardView(HttpServletRequest request, HttpServletResponse response) {
         int boardId = requestHandler.getBoardId(request);
@@ -127,10 +127,10 @@ public class BoardService {
     }
 
     /**
-     * update board
+     * update board and forward
      *
-     * @param request
-     * @param response
+     * @param request http request
+     * @param response http response
      */
     public void updateBoard(HttpServletRequest request, HttpServletResponse response) {
         RequestHandler requestHandler = new RequestHandler();
@@ -152,10 +152,10 @@ public class BoardService {
     }
 
     /**
-     * delete board
+     * delete board and forward
      *
-     * @param request
-     * @param response
+     * @param request http request
+     * @param response http response
      */
     public void deleteBoard(HttpServletRequest request, HttpServletResponse response) {
         int boardId = requestHandler.getBoardId(request);
@@ -177,8 +177,8 @@ public class BoardService {
     /**
      * forward to board write
      *
-     * @param request
-     * @param response
+     * @param request http request
+     * @param response http response
      */
     public void WriteView(HttpServletRequest request, HttpServletResponse response) {
         forward(request, response, BOARD_WRITE_VIEW_URI);

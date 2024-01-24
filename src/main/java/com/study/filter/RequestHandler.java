@@ -10,7 +10,6 @@ import com.study.file.dto.FileCreateDto;
 import com.study.filter.multitpart.MultipartHandler;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.*;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,8 +36,8 @@ public class RequestHandler {
 
     /**
      * request param에서 boardSearchDto를 가져온다.
-     * @param request
-     * @return BoardSearchDto
+     * @param request http request
+     * @return 검색조건이 있다면 반환하고 없다면 기본값을 반환한다.
      */
     public BoardSearchDto getBoardSearchDto(HttpServletRequest request) {
         return BoardSearchDto.builder()
@@ -51,7 +50,7 @@ public class RequestHandler {
 
     /**
      * request param에서 현재 페이지를 가져온다.
-     * @param request
+     * @param request http request
      * @return parma이 있다면 현제패이지를 반환하고, 없다면 첫페이지를 반환한다.
      */
     public int getCurrentPage(HttpServletRequest request) {
@@ -61,7 +60,8 @@ public class RequestHandler {
 
     /**
      * request param에서 BoardCreateDto를 가져온다.
-     * @param request
+     * @param request http request
+     * @return board를 만들때 필요한 dto를 반환한다.
      */
     public BoardCreateDto getBoardCreateDto(HttpServletRequest request) {
         MultipartRequest multipartRequest = multipartHandler.getMultipartRequest(request);
@@ -81,8 +81,9 @@ public class RequestHandler {
     }
 
     /**
-     * request param에서 BoardModifyDto를 가져온다.
-     * @param request
+     * request param에서 boardModigyDto를 가져온다.
+     * @param request http request
+     * @return board update에 필요한 dto를 반환한다.
      */
     public BoardModifyDto getBoardModifyDto(HttpServletRequest request) {
         MultipartRequest multipartRequest = multipartHandler.getMultipartRequest(request);
@@ -106,8 +107,8 @@ public class RequestHandler {
 
     /**
      * request param에서 CommentCreateDto를 가져온다.
-     * @param request
-     * @return
+     * @param request http request
+     * @return comment create에 필요한 dto를 반환한다.
      */
     public CommentCreateDto getCommentCreateDto(HttpServletRequest request) {
         validator.validateCreateComment(request);
@@ -120,8 +121,8 @@ public class RequestHandler {
 
     /**
      * request param에서 BoardId를 가져온다.
-     * @param request
-     * @return
+     * @param request http request
+     * @return board id
      */
     public int getBoardId(HttpServletRequest request) {
         return getIntParameterOrElseThrow(request, BOARD_ID_PARAM);
@@ -129,8 +130,8 @@ public class RequestHandler {
 
     /**
      * request param에서 FileId를 가져온다.
-     * @param request
-     * @return
+     * @param request http request
+     * @return file id
      */
     public int getFileId(HttpServletRequest request) {
         return getIntParameterOrElseThrow(request, FILE_ID_PARAM);

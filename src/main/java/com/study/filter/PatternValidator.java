@@ -2,6 +2,7 @@ package com.study.filter;
 
 import com.oreilly.servlet.MultipartRequest;
 import com.study.board.Category;
+import com.study.exception.CustomException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -22,7 +23,7 @@ public class PatternValidator {
 
     /**
      * board 생성 요청으로 들어온 param을 검증한다.
-     * @param multipartRequest
+     * @param multipartRequest http multipart request
      */
     public void validateCreateBoardRequest(MultipartRequest multipartRequest) {
         validateBoardCategory(multipartRequest.getParameter(CATEGORY_PARAM));
@@ -35,7 +36,7 @@ public class PatternValidator {
 
     /**
      * comment 생성 요청으로 들어온 param을 검증한다.
-     * @param request
+     * @param request http request
      */
     public void validateCreateComment(HttpServletRequest request) {
         validateParameterPattern(request.getParameter(BOARD_ID_PARAM), PK_PATTERN);
@@ -45,7 +46,7 @@ public class PatternValidator {
 
     /**
      * board 수정 요청으로 들어온 param을 검증한다.
-     * @param multipartRequest
+     * @param multipartRequest http multipart request
      */
     public void validateModifyBoardRequest(MultipartRequest multipartRequest) {
         validateParameterPattern(multipartRequest.getParameter(NAME_PARAM), NAME_PATTERN);
@@ -59,7 +60,7 @@ public class PatternValidator {
         Optional
                 .ofNullable(str)
                 .filter((s) -> Pattern.matches(pattern, s))
-                .orElseThrow(() -> new IllegalArgumentException("invalid request param"));
+                .orElseThrow(() -> new CustomException("invalid request param"));
     }
 
     private void validateBoardCategory(String category) {
@@ -70,7 +71,7 @@ public class PatternValidator {
                 .anyMatch(c -> c.equals(category));
 
         if (!match) {
-            throw new IllegalArgumentException("invalid category param");
+            throw new CustomException("invalid category param");
         }
     }
 

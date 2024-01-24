@@ -4,8 +4,10 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
+/**
+ * comment view를 위한 dto
+ */
 @Getter
 @Builder
 public class CommentDto {

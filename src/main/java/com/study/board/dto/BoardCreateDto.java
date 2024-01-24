@@ -7,6 +7,9 @@ import lombok.Getter;
 
 import java.util.List;
 
+/**
+ * board 생성을 위한 dto
+ */
 @Getter
 @Builder
 public class BoardCreateDto {

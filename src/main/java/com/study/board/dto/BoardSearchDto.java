@@ -6,6 +6,9 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+/**
+ * board search를 위한 dto
+ */
 @Getter
 @Builder
 public class BoardSearchDto {

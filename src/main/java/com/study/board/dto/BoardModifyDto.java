@@ -6,6 +6,9 @@ import lombok.Getter;
 
 import java.util.List;
 
+/**
+ * board update를 위한 dto
+ */
 @Getter
 @Builder
 public class BoardModifyDto {

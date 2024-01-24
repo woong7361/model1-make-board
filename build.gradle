@@ -28,6 +28,10 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+
+    implementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    implementation("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.28'
 
     //로컬 프로젝트 의존성 추가

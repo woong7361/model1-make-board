@@ -26,10 +26,10 @@ public class CommentService {
     }
 
     /**
-     * 코멘트를 생성한다.
+     * 코멘트를 생성후 forward 한다.
      *
-     * @param request
-     * @param response
+     * @param request http request
+     * @param response http response
      */
     public void createComment(HttpServletRequest request, HttpServletResponse response) {
         CommentCreateDto commentCreateDto = requestHandler.getCommentCreateDto(request);

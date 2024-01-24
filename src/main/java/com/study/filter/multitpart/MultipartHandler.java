@@ -14,6 +14,11 @@ import static com.study.config.ConfigConst.*;
  */
 public class MultipartHandler {
 
+    /**
+     * http request -> http multipart request
+     * @param request http request
+     * @return http multipart request
+     */
     public MultipartRequest getMultipartRequest(HttpServletRequest request) {
         String saveDirectoryPath = request.getSession().getServletContext().getRealPath(SAVE_DIR);
         FileRenamePolicy policy = new UniqueFileNamePolicy();
