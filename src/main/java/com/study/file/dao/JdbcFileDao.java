@@ -54,10 +54,12 @@ public class JdbcFileDao implements FileDao{
 
             ArrayList<FileDto> fileDtoList = new ArrayList<>();
             while (resultSet.next()) {
-                fileDtoList.add(new FileDto(
-                        resultSet.getInt("file_id"),
-                        resultSet.getString("original_name")
-                ));
+                FileDto fileDto = FileDto.builder()
+                        .fileId(resultSet.getInt("file_id"))
+                        .originalName(resultSet.getString("original_name"))
+                        .build();
+
+                fileDtoList.add(fileDto);
             }
 
             return fileDtoList;
@@ -79,11 +81,11 @@ public class JdbcFileDao implements FileDao{
 
             Optional<FileDownloadDto> fileDto = Optional.empty();
             if (resultSet.next()) {
-                fileDto = Optional.of(new FileDownloadDto(
-                        resultSet.getString("original_name"),
-                        resultSet.getString("name"),
-                        resultSet.getString("path")
-                ));
+                fileDto = Optional.of(FileDownloadDto.builder()
+                        .originalName(resultSet.getString("original_name"))
+                        .name(resultSet.getString("name"))
+                        .path(resultSet.getString("path"))
+                        .build());
             }
 
             return fileDto;

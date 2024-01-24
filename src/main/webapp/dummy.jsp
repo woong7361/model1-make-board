@@ -11,39 +11,5 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-
-    BoardDao boardDao = new JdbcBoardDao();
-
-    for (int i = 0; i < 5; i++) {
-        BoardCreateDto boardCreateDto1 = new BoardCreateDto(
-                Category.JAVA,
-                "김이박",
-                "abc123*" + i,
-                "title" + i,
-                "content" + i,
-                new ArrayList<>()
-        );
-        boardDao.saveBoard(boardCreateDto1);
-
-        BoardCreateDto boardCreateDto2 = new BoardCreateDto(
-                Category.DATABASE,
-                "김이박",
-                "abc123*" + i,
-                "title" + i,
-                "content" + i,
-                new ArrayList<>()
-        );
-        boardDao.saveBoard(boardCreateDto2);
-
-        BoardCreateDto boardCreateDto3 = new BoardCreateDto(
-                Category.JAVASCRIPT,
-                "김이박",
-                "abc123*" + i,
-                "title" + i,
-                "content" + i,
-                new ArrayList<>()
-        );
-        boardDao.saveBoard(boardCreateDto3);
-    }
 %>
 

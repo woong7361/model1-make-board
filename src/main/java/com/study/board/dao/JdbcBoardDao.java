@@ -149,16 +149,17 @@ public class JdbcBoardDao implements BoardDao{
 
             List<BoardListDto> boardList = new ArrayList<>();
             while (resultSet.next()) {
-                BoardListDto board = new BoardListDto(
-                        resultSet.getInt("b.board_id"),
-                        Category.valueOf(resultSet.getString("c.category")),
-                        resultSet.getString("b.title"),
-                        resultSet.getString("b.name"),
-                        resultSet.getInt("b.view"),
-                        resultSet.getTimestamp("b.created_at").toLocalDateTime(),
-                        resultSet.getTimestamp("b.modified_at").toLocalDateTime(),
-                        resultSet.getBoolean("count")
-                );
+                BoardListDto board = BoardListDto.builder()
+                        .boardId(resultSet.getInt("b.board_id"))
+                        .category(Category.valueOf(resultSet.getString("c.category")))
+                        .title(resultSet.getString("b.title"))
+                        .name(resultSet.getString("b.name"))
+                        .view(resultSet.getInt("b.view"))
+                        .createdAt(resultSet.getTimestamp("b.created_at").toLocalDateTime())
+                        .modifiedAt(resultSet.getTimestamp("b.modified_at").toLocalDateTime())
+                        .havaFile(resultSet.getBoolean("count"))
+                        .build();
+
                 boardList.add(board);
             }
 
@@ -186,16 +187,18 @@ public class JdbcBoardDao implements BoardDao{
 
             Optional<BoardDto> boardDto = Optional.empty();
             if (resultSet.next()) {
-                boardDto = Optional.of(new BoardDto(
-                        resultSet.getInt("b.board_id"),
-                        Category.valueOf(resultSet.getString("category")),
-                        resultSet.getString("b.title"),
-                        resultSet.getString("b.name"),
-                        resultSet.getString("b.content"),
-                        resultSet.getInt("b.view"),
-                        resultSet.getTimestamp("b.created_at").toLocalDateTime(),
-                        resultSet.getTimestamp("b.modified_at").toLocalDateTime()
-                ));
+                boardDto = Optional.of(
+                        BoardDto.builder()
+                            .boardId(resultSet.getInt("b.board_id"))
+                            .category(Category.valueOf(resultSet.getString("category")))
+                            .title(resultSet.getString("b.title"))
+                            .name(resultSet.getString("b.name"))
+                            .content(resultSet.getString("b.content"))
+                            .view(resultSet.getInt("b.view"))
+                            .createdAt(resultSet.getTimestamp("b.created_at").toLocalDateTime())
+                            .modifiedAt(resultSet.getTimestamp("b.modified_at").toLocalDateTime())
+                            .build()
+                );
             }
             return boardDto;
 

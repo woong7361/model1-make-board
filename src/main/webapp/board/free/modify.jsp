@@ -2,6 +2,7 @@
 <%@ page import="com.study.file.dto.FileDto" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.study.util.UrlUtil" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <%--
   Created by IntelliJ IDEA.
   User: woong
@@ -70,11 +71,11 @@
                 </tr>
                 <tr>
                     <th>등록 일시</th>
-                    <td><%=boardDto.getCreatedAtString()%></td>
+                    <td><%=boardDto.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))%></td>
                 </tr>
                 <tr>
                     <th>수정 일시</th>
-                    <td><%=boardDto.getModifiedAt()%></td>
+                    <td><%=boardDto.getModifiedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))%></td>
                 </tr>
                 <tr>
                     <th>조회수</th>

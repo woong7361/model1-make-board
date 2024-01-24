@@ -18,6 +18,7 @@ public class UrlUtil {
      */
     public static String getSearchParamWithBoardIdAndPage(HttpServletRequest request) {
         String queryString = getSearchParam(request);
+        queryString = getNextQueryStringByParam(request, PAGE_PARAM, queryString);
         queryString = getNextQueryStringByParam(request, BOARD_ID_PARAM, queryString);
 
         return queryString;
@@ -34,7 +35,6 @@ public class UrlUtil {
         queryString = getNextQueryStringByParam(request, CATEGORY_PARAM, queryString);
         queryString = getNextQueryStringByParam(request, START_DATE_PARAM, queryString);
         queryString = getNextQueryStringByParam(request, END_DATE_PARAM, queryString);
-        queryString = getNextQueryStringByParam(request, PAGE_PARAM, queryString);
 
         return queryString;
     }

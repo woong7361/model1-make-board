@@ -39,12 +39,12 @@ public class RequestHandler {
      * @return BoardSearchDto
      */
     public BoardSearchDto getBoardSearchDto(HttpServletRequest request) {
-         return new BoardSearchDto(
-                getStringParameterWithDefaultValue(request, SEARCH_KEY_PARAM, FIND_ALL),
-                getCategoryParameterWithDefaultValue(request, SEARCH_CATEGORY_PARAM, Category.ALL),
-                getLocalDateTimeParameterByDateTimeWithDefaultValue(request, SEARCH_START_DATE_PARAM, LocalDateTime.now().minusYears(1L)),
-                getLocalDateTimeParameterByDateTimeWithDefaultValue(request, SEARCH_END_DATE_PARAM, LocalDateTime.now())
-        );
+        return BoardSearchDto.builder()
+                .searchKey(getStringParameterWithDefaultValue(request, SEARCH_KEY_PARAM, FIND_ALL))
+                .searchCategory(getCategoryParameterWithDefaultValue(request, SEARCH_CATEGORY_PARAM, Category.ALL))
+                .searchStartDate(getLocalDateTimeParameterByDateTimeWithDefaultValue(request, SEARCH_START_DATE_PARAM, LocalDateTime.now().minusYears(1L)))
+                .searchEndDate(getLocalDateTimeParameterByDateTimeWithDefaultValue(request, SEARCH_END_DATE_PARAM, LocalDateTime.now()))
+                .build();
     }
 
     /**
@@ -68,14 +68,14 @@ public class RequestHandler {
 
         List<FileCreateDto> fileList = this.getFileCreateDtoList(multipartRequest);
 
-        return new BoardCreateDto(
-                Category.valueOf(multipartRequest.getParameter(CATEGORY_PARAM)),
-                multipartRequest.getParameter(NAME_PARAM),
-                multipartRequest.getParameter(PASSWORD_PARAM),
-                multipartRequest.getParameter(TITLE_PARAM),
-                multipartRequest.getParameter(CONTENT_PARAM),
-                fileList
-        );
+        return BoardCreateDto.builder()
+                .category(Category.valueOf(multipartRequest.getParameter(CATEGORY_PARAM)))
+                .name(multipartRequest.getParameter(NAME_PARAM))
+                .password(multipartRequest.getParameter(PASSWORD_PARAM))
+                .title(multipartRequest.getParameter(TITLE_PARAM))
+                .content(multipartRequest.getParameter(CONTENT_PARAM))
+                .fileList(fileList)
+                .build();
     }
 
     /**
@@ -90,15 +90,15 @@ public class RequestHandler {
         List<FileCreateDto> fileCreateList = this.getFileCreateDtoList(multipartRequest);
         List<Integer> deleteFileIdList = getFileDeleteIdList(multipartRequest);
 
-        return new BoardModifyDto(
-                Integer.parseInt(multipartRequest.getParameter(BOARD_ID_PARAM)),
-                multipartRequest.getParameter(NAME_PARAM),
-                multipartRequest.getParameter(PASSWORD_PARAM),
-                multipartRequest.getParameter(TITLE_PARAM),
-                multipartRequest.getParameter(CONTENT_PARAM),
-                fileCreateList,
-                deleteFileIdList
-        );
+        return BoardModifyDto.builder()
+                .board_id(Integer.parseInt(multipartRequest.getParameter(BOARD_ID_PARAM)))
+                .name(multipartRequest.getParameter(NAME_PARAM))
+                .password(multipartRequest.getParameter(PASSWORD_PARAM))
+                .title(multipartRequest.getParameter(TITLE_PARAM))
+                .content(multipartRequest.getParameter(CONTENT_PARAM))
+                .createFileList(fileCreateList)
+                .deleteFileIdList(deleteFileIdList)
+                .build();
     }
 
 
@@ -110,10 +110,10 @@ public class RequestHandler {
     public CommentCreateDto getCommentCreateDto(HttpServletRequest request) {
         patternValidator.validateCreateComment(request);
 
-        return new CommentCreateDto(
-                Integer.parseInt(request.getParameter(BOARD_ID_PARAM)),
-                request.getParameter(CONTENT_PARAM)
-        );
+        return CommentCreateDto.builder()
+                .board_id(Integer.parseInt(request.getParameter(BOARD_ID_PARAM)))
+                .content(request.getParameter(CONTENT_PARAM))
+                .build();
     }
 
     /**
@@ -178,12 +178,14 @@ public class RequestHandler {
             File file = multipartRequest.getFile(fileParam);
             String extension = getExtension(file);
 
-            fileList.add(new FileCreateDto(
-                    multipartRequest.getOriginalFileName(fileParam),
-                    file.getName(),
-                    file.getAbsolutePath(),
-                    extension
-            ));
+            FileCreateDto fileCreateDto = FileCreateDto.builder()
+                    .originalFileName(multipartRequest.getOriginalFileName(fileParam))
+                    .fileName(file.getName())
+                    .filePath(file.getAbsolutePath())
+                    .extension(extension)
+                    .build();
+
+            fileList.add(fileCreateDto);
         }
 
         return fileList;

@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="static com.study.util.UrlUtil.getSearchParam" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%!
@@ -101,11 +102,11 @@
                     </td>
                     <td><%=board.getName() %></td>
                     <td><%=board.getView() %></td>
-                    <td><%=board.getCreatedAtString() %></td>
-                    <%if (board.getCreatedAtString().equals(board.getModifiedAtString())) {%>
+                    <td><%=board.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) %></td>
+                    <%if (board.getCreatedAt().equals(board.getModifiedAt())) {%>
                         <td style="text-align: center"> - </td>
                     <%} else {%>
-                        <td><%=board.getModifiedAtString() %></td>
+                        <td><%=board.getModifiedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) %></td>
                     <%} %>
                 </tr>
                 <%} %>

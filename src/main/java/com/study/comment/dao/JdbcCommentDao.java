@@ -50,11 +50,13 @@ public class JdbcCommentDao implements CommentDao{
 
             List<CommentDto> commentList = new ArrayList<>();
             while (resultSet.next()) {
-                commentList.add(new CommentDto(
-                        resultSet.getInt("comment_id"),
-                        resultSet.getString("content"),
-                        resultSet.getTimestamp("created_at").toLocalDateTime()
-                ));
+                CommentDto commentDto = CommentDto.builder()
+                        .commentId(resultSet.getInt("comment_id"))
+                        .content(resultSet.getString("content"))
+                        .createdAt(resultSet.getTimestamp("created_at").toLocalDateTime())
+                        .build();
+
+                commentList.add(commentDto);
             }
 
             return commentList;

@@ -3,6 +3,7 @@
 <%@ page import="com.study.file.dto.FileDto" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.study.util.UrlUtil" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <%--
   Created by IntelliJ IDEA.
   User: woong
@@ -50,9 +51,9 @@
     <div id="board_main">
         <div id="board_name"> <%=boardDto.getName()%> </div>
         <div id="board_time">
-            등록일시 <%=boardDto.getCreatedAtString()%>
+            등록일시 <%=boardDto.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))%>
             &nbsp&nbsp&nbsp&nbsp
-            수정일시 <%=boardDto.getModifiedAt()%>
+            수정일시 <%=boardDto.getModifiedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))%>
         </div>
         <div id="board_title">
             [<%=boardDto.getCategory().toString()%>]
@@ -80,7 +81,7 @@
         <h3>댓글 창</h3>
         <%for(CommentDto comment : commentList){ %>
         <dl id="comment">
-            <dd class="created_at"><%=comment.getCreatedAtString() %></dd>
+            <dd class="created_at"><%=comment.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) %></dd>
             <dd class="content"><%=comment.getContent()%></dd>
         </dl>
         <%} %>
