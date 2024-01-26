@@ -52,7 +52,6 @@ public class BoardService {
 
         int boardId = createBoard(boardCreateDto);
 
-        // TODO make uri const
         forward(request, response,  BOARD_VIEW_CONTROLLER_URI + "?board_id=" + boardId);
     }
 
