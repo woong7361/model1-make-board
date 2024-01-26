@@ -12,17 +12,19 @@ import com.study.file.dao.FileDao;
 import com.study.file.dao.FileDaoFactory;
 import com.study.file.dto.FileDto;
 import com.study.filter.RequestHandler;
+import com.study.util.FileHandler;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import static com.study.config.ConfigConst.PAGE_OFFSET;
 import static com.study.constant.ControllerUriConstant.BOARD_LIST_VIEW_CONTROLLER_URI;
 import static com.study.constant.ControllerUriConstant.BOARD_VIEW_CONTROLLER_URI;
+import static com.study.constant.ExceptionConstant.IO_EXCEPTION_MESSAGE;
+import static com.study.constant.ExceptionConstant.SERVLET_EXCEPTION_MESSAGE;
 import static com.study.constant.ViewUriConstant.*;
 
 /**
@@ -135,17 +137,12 @@ public class BoardService {
         RequestHandler requestHandler = new RequestHandler();
         BoardModifyDto boardModifyDto = requestHandler.getBoardModifyDto(request);
 
-        boardDao.updateBoard(boardModifyDto);
+        List<String> filePathList = fileDao.getFileFullPathListByIdList(boardModifyDto.getDeleteFileIdList());
+        FileHandler.deleteFiles(filePathList);
 
-        List<String> filePathList = fileDao.getFilePathListByIdList(boardModifyDto.getDeleteFileIdList());
+        boardDao.updateBoard(boardModifyDto);
         fileDao.deleteFileByListIdList(boardModifyDto.getDeleteFileIdList());
         fileDao.saveFileList(boardModifyDto.getCreateFileList(), boardModifyDto.getBoard_id());
-
-        //TODO filehandler로 추출
-        for (String path : filePathList) {
-            File file = new File(path);
-            file.delete();
-        }
 
         forward(request,response, BOARD_VIEW_CONTROLLER_URI);
     }
@@ -159,15 +156,11 @@ public class BoardService {
     public void deleteBoard(HttpServletRequest request, HttpServletResponse response) {
         int boardId = requestHandler.getBoardId(request);
 
-        fileDao.deleteByBoardId(boardId);
-        commentDao.deleteByBoardId(boardId);
-
         List<String> filePathList = fileDao.getFilePathListByBoardId(boardId);
-        for (String path : filePathList) {
-            File file = new File(path);
-            file.delete();
-        }
+        FileHandler.deleteFiles(filePathList);
 
+        commentDao.deleteByBoardId(boardId);
+        fileDao.deleteByBoardId(boardId);
         boardDao.deleteByBoardId(boardId);
 
         forward(request,response, BOARD_LIST_VIEW_CONTROLLER_URI);
@@ -196,9 +189,9 @@ public class BoardService {
         try {
             request.getRequestDispatcher(uri).forward(request, response);
         } catch (ServletException e) {
-            throw new WrapCheckedException("ServletException", e);
+            throw new WrapCheckedException(SERVLET_EXCEPTION_MESSAGE, e);
         } catch (IOException e) {
-            throw new WrapCheckedException("IOException", e);
+            throw new WrapCheckedException(IO_EXCEPTION_MESSAGE, e);
         }
     }
 

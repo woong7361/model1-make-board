@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.study.constant.ExceptionConstant.INVALID_REQUEST_PARAM_MESSAGE;
 import static com.study.constant.RequestParamConstant.*;
 
 /**
@@ -163,7 +164,7 @@ public class RequestHandler {
     private int getIntParameterOrElseThrow(HttpServletRequest request, String parameter) {
         return Optional.ofNullable(request.getParameter(parameter))
                 .map((p) -> Integer.parseInt(p))
-                .orElseThrow(() -> new IllegalArgumentException("invalid parameter " + parameter));
+                .orElseThrow(() -> new IllegalArgumentException(INVALID_REQUEST_PARAM_MESSAGE));
     }
 
     private List<FileCreateDto> getFileCreateDtoList(MultipartRequest multipartRequest) {

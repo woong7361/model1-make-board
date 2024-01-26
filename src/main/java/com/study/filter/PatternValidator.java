@@ -3,12 +3,15 @@ package com.study.filter;
 import com.oreilly.servlet.MultipartRequest;
 import com.study.board.Category;
 import com.study.exception.CustomException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import static com.study.constant.ExceptionConstant.INVALID_REQUEST_PARAM_MESSAGE;
 import static com.study.constant.RequestParamConstant.*;
 
 /**
@@ -20,6 +23,8 @@ public class PatternValidator {
     static final String TITLE_PATTERN = ".{4,100}$";
     static final String CONTENT_PATTERN = ".{4,2000}$";
     static final String PK_PATTERN = "^[0-9]+$";
+
+    private Logger logger = LoggerFactory.getLogger(PatternValidator.class);
 
     /**
      * board 생성 요청으로 들어온 param을 검증한다.
@@ -60,7 +65,10 @@ public class PatternValidator {
         Optional
                 .ofNullable(str)
                 .filter((s) -> Pattern.matches(pattern, s))
-                .orElseThrow(() -> new CustomException("invalid request param"));
+                .orElseThrow(() -> {
+                    logger.debug("pattern validate fail - pattern: {}, targetString: {}", pattern, str);
+                    return new CustomException(INVALID_REQUEST_PARAM_MESSAGE);
+                });
     }
 
     private void validateBoardCategory(String category) {
@@ -71,7 +79,8 @@ public class PatternValidator {
                 .anyMatch(c -> c.equals(category));
 
         if (!match) {
-            throw new CustomException("invalid category param");
+            logger.debug("category validate fail - categories: {}, targetString: {}", categories, category);
+            throw new CustomException(INVALID_REQUEST_PARAM_MESSAGE);
         }
     }
 

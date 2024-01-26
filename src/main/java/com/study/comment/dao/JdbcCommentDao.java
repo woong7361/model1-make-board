@@ -4,13 +4,18 @@ import com.study.comment.dto.CommentCreateDto;
 import com.study.comment.dto.CommentDto;
 import com.study.connection.DBConnection;
 import com.study.exception.WrapCheckedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.study.constant.ExceptionConstant.SQL_EXCEPTION_MESSAGE;
+
 public class JdbcCommentDao implements CommentDao{
+    private final Logger logger = LoggerFactory.getLogger(JdbcCommentDao.class);
     @Override
     public void saveComment(CommentCreateDto commentCreateDto) {
         String createCommentSql =
@@ -29,7 +34,8 @@ public class JdbcCommentDao implements CommentDao{
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new WrapCheckedException("sql Exception", e);
+            logger.error("sql: {}",createCommentSql ,e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 
@@ -61,7 +67,8 @@ public class JdbcCommentDao implements CommentDao{
 
             return commentList;
         } catch (SQLException e) {
-            throw new WrapCheckedException("sql Exception", e);
+            logger.error("sql: {}",getCommentSql ,e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 
@@ -80,7 +87,8 @@ public class JdbcCommentDao implements CommentDao{
             preparedStatement.setInt(1, boardId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new WrapCheckedException("sql Exception", e);
+            logger.error("sql: {}",deleteSql ,e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 

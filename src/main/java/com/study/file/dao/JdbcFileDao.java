@@ -5,6 +5,8 @@ import com.study.exception.WrapCheckedException;
 import com.study.file.dto.FileCreateDto;
 import com.study.file.dto.FileDownloadDto;
 import com.study.file.dto.FileDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.study.constant.ExceptionConstant.SQL_EXCEPTION_MESSAGE;
+
 public class JdbcFileDao implements FileDao{
+    private final Logger logger = LoggerFactory.getLogger(JdbcFileDao.class);
 
     @Override
     public void saveFileList(List<FileCreateDto> fileList, int boardId) {
@@ -37,7 +42,8 @@ public class JdbcFileDao implements FileDao{
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            throw new WrapCheckedException("sql exception", e);
+            logger.error("sql: {}", createFileSql, e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 
@@ -64,7 +70,8 @@ public class JdbcFileDao implements FileDao{
 
             return fileDtoList;
         } catch (SQLException e) {
-            throw new WrapCheckedException("sql Exception", e);
+            logger.error("sql: {}", getFileSql, e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 
@@ -90,7 +97,8 @@ public class JdbcFileDao implements FileDao{
 
             return fileDto;
         }catch (SQLException e) {
-            throw new WrapCheckedException("sql Exception", e);
+            logger.error("sql: {}", getFileSql, e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 
@@ -108,7 +116,8 @@ public class JdbcFileDao implements FileDao{
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            throw new WrapCheckedException("sql Exception", e);
+            logger.error("sql: {}", deleteFileSql, e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 
@@ -123,41 +132,44 @@ public class JdbcFileDao implements FileDao{
             preparedStatement.setInt(1, boardId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new WrapCheckedException("sql Exception", e);
+            logger.error("sql: {}", deleteSql, e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 
     @Override
     public List<String> getFilePathListByBoardId(int boardId) {
-        String deleteSql = "SELECT path FROM file WHERE board_id = ?";
+        String filePathSql = "SELECT path, name FROM file WHERE board_id = ?";
 
         try(
                 Connection connection = DBConnection.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
+                PreparedStatement preparedStatement = connection.prepareStatement(filePathSql);
                 ) {
             preparedStatement.setInt(1, boardId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             List<String> filePathList = new ArrayList<>();
             while (resultSet.next()) {
-                filePathList.add(resultSet.getString("path"));
+                String fullPath = resultSet.getString("path") + "/" + resultSet.getString("name");
+                filePathList.add(fullPath);
             }
 
             resultSet.close();
 
             return filePathList;
         } catch (SQLException e) {
-            throw new WrapCheckedException("sql Exception", e);
+            logger.error("sql: {}", filePathSql, e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 
     @Override
-    public List<String> getFilePathListByIdList(List<Integer> FileIdList) {
-        String deleteFileSql = "SELECT path FROM file WHERE (file_id = ?)";
+    public List<String> getFileFullPathListByIdList(List<Integer> FileIdList) {
+        String fullPathSql = "SELECT path, name FROM file WHERE (file_id = ?)";
 
         try (
                 Connection connection = DBConnection.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(deleteFileSql);
+                PreparedStatement preparedStatement = connection.prepareStatement(fullPathSql);
                 ) {
 
             List<String> filePathList = new ArrayList<>();
@@ -166,13 +178,15 @@ public class JdbcFileDao implements FileDao{
 
                 ResultSet resultSet = preparedStatement.executeQuery();
                 if (resultSet.next()) {
-                    filePathList.add(resultSet.getString("path"));
+                    String fullPath = resultSet.getString("path") + "/" + resultSet.getString("name");
+                    filePathList.add(fullPath);
                 }
             }
 
             return filePathList;
         } catch (SQLException e) {
-            throw new WrapCheckedException("sql Exception", e);
+            logger.error("sql: {}", fullPathSql, e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
 
     }

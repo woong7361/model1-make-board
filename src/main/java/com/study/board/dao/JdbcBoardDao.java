@@ -7,6 +7,8 @@ import com.study.connection.DBConnection;
 import com.study.encryption.CipherEncrypt;
 import com.study.encryption.EncryptManager;
 import com.study.exception.WrapCheckedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -14,8 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.study.constant.ExceptionConstant.SQL_EXCEPTION_MESSAGE;
+
 public class JdbcBoardDao implements BoardDao{
     public static final String FIND_ALL = "ALL";
+    private final Logger logger = LoggerFactory.getLogger(JdbcBoardDao.class);
 
     @Override
     public int saveBoard(BoardCreateDto boardCreateDto) {
@@ -51,7 +56,8 @@ public class JdbcBoardDao implements BoardDao{
 
             return boardId;
         } catch (SQLException e) {
-            throw new WrapCheckedException("sql Exception", e);
+            logger.error("sql: {}", createBoardSql, e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 
@@ -98,7 +104,8 @@ public class JdbcBoardDao implements BoardDao{
 
             return count;
         } catch (SQLException e) {
-            throw new WrapCheckedException("sql Exception", e);
+            logger.error("sql: {}", getCountSql, e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 
@@ -165,7 +172,8 @@ public class JdbcBoardDao implements BoardDao{
 
             return boardList;
         }catch (SQLException e){
-            throw new WrapCheckedException("sql Exception", e);
+            logger.error("sql: {}", getBoardListSql, e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 
@@ -202,26 +210,28 @@ public class JdbcBoardDao implements BoardDao{
             }
             return boardDto;
 
-        } catch (SQLException sqlException) {
-            throw new WrapCheckedException("sql exception", sqlException);
+        } catch (SQLException e) {
+            logger.error("sql: {}", getBoardSql, e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 
     @Override
     public void addBoardViewByBoardId(int boardId) {
-        String getBoardSql =
+        String addViewSql =
                 "UPDATE board " +
                 "SET view = (view+1) " +
                 "WHERE board_id = ?";
 
         try (
                 Connection connection = DBConnection.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(getBoardSql);
+                PreparedStatement preparedStatement = connection.prepareStatement(addViewSql);
         ) {
             preparedStatement.setInt(1, boardId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new WrapCheckedException("sql Exception", e);
+            logger.error("sql: {}", addViewSql, e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 
@@ -249,7 +259,8 @@ public class JdbcBoardDao implements BoardDao{
             preparedStatement.setInt(6, boardModifyDto.getBoard_id());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new WrapCheckedException("sql Exception", e);
+            logger.error("sql: {}", updateBoardSql, e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 
@@ -267,7 +278,8 @@ public class JdbcBoardDao implements BoardDao{
             preparedStatement.setInt(1, boardId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new WrapCheckedException("sql Exception", e);
+            logger.error("sql: {}", deleteSql, e);
+            throw new WrapCheckedException(SQL_EXCEPTION_MESSAGE, e);
         }
     }
 

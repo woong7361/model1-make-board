@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.study.constant.ControllerUriConstant.BOARD_VIEW_CONTROLLER_URI;
+import static com.study.constant.ExceptionConstant.IO_EXCEPTION_MESSAGE;
+import static com.study.constant.ExceptionConstant.SERVLET_EXCEPTION_MESSAGE;
 
 /**
  * comment의 business logic을 담당
@@ -44,9 +46,9 @@ public class CommentService {
         try {
             request.getRequestDispatcher(uri).forward(request, response);
         } catch (ServletException e) {
-            throw new WrapCheckedException("ServletException", e);
+            throw new WrapCheckedException(SERVLET_EXCEPTION_MESSAGE, e);
         } catch (IOException e) {
-            throw new WrapCheckedException("IOException", e);
+            throw new WrapCheckedException(IO_EXCEPTION_MESSAGE, e);
         }
     }
 }

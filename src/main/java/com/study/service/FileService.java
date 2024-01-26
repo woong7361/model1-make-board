@@ -13,6 +13,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import static com.study.constant.ExceptionConstant.FILE_DOWNLOAD_EXCEPTION_MESSAGE;
+import static com.study.constant.ExceptionConstant.INVALID_FILE_ID_MESSAGE;
+
 /**
  * file의 business logic을 담당
  */
@@ -35,7 +38,7 @@ public class FileService {
         int fileId = requestHandler.getFileId(request);
 
         FileDownloadDto fileDto = fileDao.getFileDownloadDtoByFileId(fileId)
-                .orElseThrow(() -> new IllegalArgumentException("invalid fileId"));
+                .orElseThrow(() -> new IllegalArgumentException(INVALID_FILE_ID_MESSAGE));
 
         File file = new File(fileDto.getPath() + "/" + fileDto.getName());
 
@@ -72,7 +75,7 @@ public class FileService {
             outputStream.close();
             inputStream.close();
         } catch (IOException e) {
-            throw new WrapCheckedException("file download Exception", e);
+            throw new WrapCheckedException(FILE_DOWNLOAD_EXCEPTION_MESSAGE, e);
         }
 
     }

@@ -57,5 +57,5 @@ public interface FileDao {
      * @param FileIdList file's id list
      * @return file's path list
      */
-    List<String> getFilePathListByIdList(List<Integer> FileIdList);
+    List<String> getFileFullPathListByIdList(List<Integer> FileIdList);
 }
