@@ -31,13 +31,10 @@ public class FrontControlServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Logger logger = LoggerFactory.getLogger(FrontControlServlet.class);
 
-        //TODO error logging의 위치가 잘못된듯한 느낌
-        // throw 할때 error의 정보와 같이 던져야 할듯
         try {
             request.setCharacterEncoding("UTF-8");
             controllerMapper.mapping(request, response);
         } catch (WrapCheckedException e) {
-            e.printStackTrace();
             logger.error("", e);
 
             response.sendRedirect(INTERNAL_ERROR_PAGE_VIEW_URI);
